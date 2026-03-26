@@ -4,11 +4,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
+    <title>AS53820's Personal Page</title>
+    <style>
+        body {
+            /* 背景は暗い紫 */
+            background-color: #1a1033;
+            /* 文字色は白 */
+            color: #ffffff;
+            /* フォントは標準的なゴシック体 */
+            font-family: 'MS PGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* 平成テキストサイト風見出し（マーカーデザイン） */
+        h2 {
+            display: inline-block;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 10px 0;
+            padding: 2px 10px;
+        }
+
+        h2.links {
+            /* 見出し背景：水色 */
+            background-color: #00ffff;
+        }
+
+        h2.products {
+            /* 見出し背景：ピンク */
+            background-color: #ff00ff;
+        }
+
+        /* リンク集とProductsセクション */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        /* リンクのスタイル */
+        .section a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .section a:hover {
+            /* ホバー時：下線 */
+            text-decoration: underline;
+        }
+
+        /* Productsサブ見出し */
+        .products-sub {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        /* キャラクター画像の並び（ダミー画像） */
+        .character-line {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .character-line img {
+            width: 30px;
+            height: 30px;
+            border: none;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <div class="section">
+            <h2 class="links">Links</h2>
+            <div class="link-list">
+                <a href="#">Discord (ID:asas511)</a>
+                <a href="#">X (@asas511)</a>
+                <a href="#">LINE (ID:asas511)</a>
+                <a href="#">Github</a>
+                <a href="#">YouTube Downloader</a>
+                <a href="#">My Banner</a>
+            </div>
+        </div>
 
+        <div class="section">
+            <h2 class="products">Products</h2>
+            <div class="products-sub">Products</div>
+            <div class="character-line">
+                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
+                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
+                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
+                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
