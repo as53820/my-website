@@ -3,113 +3,116 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AS53820's Personal Page</title>
+    <title>AS53820 // Personal Terminal</title>
     <style>
         body {
-            /* 背景は暗い紫 */
-            background-color: #1a1033;
-            /* 文字色は白 */
-            color: #ffffff;
-            /* フォントは標準的なゴシック体 */
-            font-family: 'MS PGothic', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
-            margin: 0;
-            padding: 0;
+            /* 深みのある暗い紫 */
+            background-color: #0d0221;
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
+            /* 画面にうっすら走査線のようなノイズを入れて「端末感」を出す */
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 118, 0.06));
+            background-size: 100% 2px, 3px 100%;
         }
 
-        .container {
-            width: 90%;
-            max-width: 600px;
+        .box {
+            border: 1px solid #4a148c;
+            /* 紫の枠線 */
+            padding: 40px;
+            background: rgba(13, 2, 33, 0.8);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.2);
             text-align: center;
         }
 
-        /* 平成テキストサイト風見出し（マーカーデザイン） */
-        h2 {
+        /* 独自の見出しスタイル：ネオンパープル */
+        .tag {
             display: inline-block;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #000000;
-            margin: 0 0 10px 0;
-            padding: 2px 10px;
+            background: #8a2be2;
+            color: #fff;
+            padding: 2px 12px;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 3px 3px 0px #4b0082;
         }
 
-        h2.links {
-            /* 見出し背景：水色 */
-            background-color: #00ffff;
-        }
-
-        h2.products {
-            /* 見出し背景：ピンク */
-            background-color: #ff00ff;
-        }
-
-        /* リンク集とProductsセクション */
-        .section {
-            margin-bottom: 30px;
-        }
-
-        /* リンクのスタイル */
-        .section a {
+        .links a {
             display: block;
-            color: #ffffff;
+            color: #b388ff;
             text-decoration: none;
-            margin-bottom: 5px;
-            font-size: 1em;
+            margin: 8px 0;
+            transition: 0.3s;
         }
 
-        .section a:hover {
-            /* ホバー時：下線 */
-            text-decoration: underline;
+        .links a:hover {
+            color: #fff;
+            text-shadow: 0 0 8px #8a2be2;
+            padding-left: 10px;
         }
 
-        /* Productsサブ見出し */
-        .products-sub {
-            font-size: 1.1em;
-            margin-bottom: 10px;
+        .spec-text {
+            font-size: 0.8em;
+            color: #7e57c2;
+            margin-top: 20px;
+            border-top: 1px dashed #4a148c;
+            padding-top: 10px;
         }
 
-        /* キャラクター画像の並び（ダミー画像） */
-        .character-line {
+        /* キャラクターエリア：ただ並べるのではなく枠で囲む */
+        .avatar-area {
+            margin-top: 30px;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
+            opacity: 0.7;
         }
 
-        .character-line img {
-            width: 30px;
-            height: 30px;
-            border: none;
+        .avatar-area img {
+            filter: sepia(1) saturate(2) hue-rotate(240deg);
+            /* 紫っぽく加工 */
+            width: 32px;
+            transition: 0.5s;
+        }
+
+        .avatar-area img:hover {
+            filter: none;
+            opacity: 1;
+            transform: scale(1.2);
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="section">
-            <h2 class="links">Links</h2>
-            <div class="link-list">
-                <a href="#">Discord (ID:asas511)</a>
-                <a href="#">X (@asas511)</a>
-                <a href="#">LINE (ID:asas511)</a>
-                <a href="#">Github</a>
-                <a href="#">YouTube Downloader</a>
-                <a href="#">My Banner</a>
-            </div>
+    <div class="box">
+        <div class="tag">System Access</div>
+        <div class="links">
+            <a href="#">Discord (asas511)</a>
+            <a href="#">X (Coming Soon)</a>
+            <a href="#">LINE (asas511)</a>
+            <a href="https://github.com/as53820">GitHub</a>
         </div>
 
-        <div class="section">
-            <h2 class="products">Products</h2>
-            <div class="products-sub">Products</div>
-            <div class="character-line">
-                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
-                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
-                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
-                <img src="https://via.placeholder.com/30x30/FFFFFF/000000?text=C" alt="char">
-            </div>
+        <div class="tag" style="background: #e91e63; box-shadow: 3px 3px 0px #880e4f; margin-top: 20px;">Archive</div>
+        <div class="links">
+            <a href="#">YT Downloader</a>
+            <a href="#">Project: Physical AI</a>
+        </div>
+
+        <div class="spec-text">
+            OS: Arch Linux | Hardware: i7-14700K / Tesla V100
+        </div>
+
+        <div class="avatar-area">
+            <img src="https://via.placeholder.com/32/8a2be2/ffffff?text=1" alt="0">
+            <img src="https://via.placeholder.com/32/8a2be2/ffffff?text=2" alt="1">
+            <img src="https://via.placeholder.com/32/8a2be2/ffffff?text=3" alt="3">
+            <img src="https://via.placeholder.com/32/8a2be2/ffffff?text=4" alt="5">
         </div>
     </div>
 </body>
