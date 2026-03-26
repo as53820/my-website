@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>G83/KU | Arch Linux x Kosen</title>
+    <title>Arch Linux x Kosen</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
@@ -15,8 +15,8 @@
                 extend: {
                     colors: {
                         cyber: {
-                            black: '#0a0515',
-                            darker: '#050209',
+                            black: '#020205',
+                            darker: '#000000',
                             neon: {
                                 cyan: '#22d3ee',
                                 pink: '#f472b6',
@@ -34,79 +34,56 @@
         }
     </script>
     <link rel="stylesheet" href="./style.css">
-    <meta name="description" content="Arch Linux | Kosen student. Minimalist cyberpunk portfolio.">
+    <meta name="description" content="Arch Linux | Kosen student. Minimalist portfolio.">
 </head>
 
 <body class="selection:bg-cyber-neon-cyan selection:text-cyber-black overflow-x-hidden">
     <!-- Scanlines and Overlay -->
     <div
-        class="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(circle,transparent_0%,rgba(0,0,0,0.6)_100%)]">
+        class="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(circle,transparent_0%,rgba(0,0,0,0.8)_100%)]">
     </div>
 
-    <main class="relative z-10 max-w-4xl mx-auto px-6 py-16 md:py-32 space-y-32">
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-24 md:py-48 space-y-32">
 
         <!-- Hero Section -->
-        <header class="space-y-8 text-center md:text-left">
-            <div
-                class="inline-block px-3 py-1 bg-cyber-neon-pink/10 border border-cyber-neon-pink text-cyber-neon-pink text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">
-                Status: Minimalist Mode
-            </div>
-            <h1 class="text-6xl md:text-8xl font-black leading-none text-cyber-neon-cyan">
-                <span class="glitch-text" data-text="G83/KU">G83/KU</span>
+        <header class="space-y-12 text-center md:text-left">
+            <h1 class="text-6xl md:text-8xl font-black leading-none text-cyber-neon-cyan lowercase tracking-tighter">
+                <span class="glitch-text" data-text="minimalist">minimalist</span>
             </h1>
-            <p class="text-xl md:text-2xl text-cyber-neon-pink font-bold italic opacity-80">
-                > Kosen 1st Yr | Arch Linux
+            <p class="text-lg md:text-xl text-slate-500 font-bold italic">
+                > kosen 1st yr // arch linux
             </p>
 
-            <div class="flex flex-wrap justify-center md:justify-start gap-6 pt-8">
-                <a href="#" class="cyber-button flex items-center gap-2 group">
-                    <span class="text-sm">X / TWITTER</span>
-                </a>
+            <div class="flex flex-wrap justify-center md:justify-start gap-8 pt-4">
                 <a href="#"
-                    class="cyber-button border-cyber-neon-pink text-cyber-neon-pink hover:shadow-[0_4px_20px_rgba(244,114,182,0.5)] flex items-center gap-2 group">
-                    <span class="text-sm">DISCORD</span>
+                    class="text-xs font-bold tracking-[0.4em] text-cyber-neon-pink hover:text-white transition-colors">
+                    X / TWITTER
                 </a>
-                <a href="#" class="p-2 border border-slate-800 hover:border-cyber-neon-yellow transition-colors group"
-                    title="GitHub">
-                    <svg class="w-6 h-6 text-slate-500 group-hover:text-cyber-neon-yellow" fill="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-                    </svg>
+                <div class="text-xs font-bold tracking-[0.4em] text-cyber-neon-cyan flex items-center gap-2">
+                    <span class="opacity-50">DISCORD:</span> asas511
+                </div>
+                <a href="#"
+                    class="text-xs font-bold tracking-[0.4em] text-slate-600 hover:text-cyber-neon-yellow transition-colors">
+                    GITHUB
                 </a>
             </div>
         </header>
 
-        <!-- Minimal Neofetch -->
-        <section class="max-w-md mx-auto md:mx-0">
-            <div class="terminal-box cyber-border border-cyber-neon-cyan/30">
-                <div class="flex gap-1.5 mb-4 border-b border-slate-900 pb-2">
-                    <div class="w-2 h-2 rounded-full bg-cyber-neon-cyan"></div>
-                    <div class="text-[8px] text-slate-600 font-bold uppercase tracking-tighter">sys_info.log</div>
-                </div>
-                <div class="flex gap-6 items-center text-xs">
-                    <pre class="text-cyber-neon-cyan font-bold opacity-50">
-  /\
- /  \
-/    \
-      </pre>
-                    <div class="space-y-1 font-mono text-slate-400">
-                        <div><span class="text-cyber-neon-pink">OS:</span> Arch Linux</div>
-                        <div><span class="text-cyber-neon-pink">ID:</span> Kosen 1st Yr</div>
-                        <div><span class="text-cyber-neon-pink">ENV:</span> Hyprland / nvim</div>
-                    </div>
+        <!-- Ultra Minimal Terminal -->
+        <section class="max-w-xs mx-auto md:mx-0 opacity-40 hover:opacity-100 transition-opacity">
+            <div class="terminal-box border-none p-0">
+                <div class="flex gap-4 items-center text-[10px] font-mono text-slate-600">
+                    <span class="text-cyber-neon-pink">os</span> arch
+                    <span class="text-cyber-neon-pink">env</span> hyprland
+                    <span class="text-cyber-neon-pink">shell</span> zsh
                 </div>
             </div>
         </section>
 
-        <!-- Minimal Footer -->
-        <footer
-            class="pt-12 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 opacity-50">
-            <div class="text-[10px] tracking-[0.4em] font-bold text-slate-500 uppercase">
-                Minimalist Cyberpunk Framework
-            </div>
-            <div class="text-[10px] font-mono">
-                &copy; 2026 G83/KU // <span class="text-cyber-neon-cyan">I use Arch btw.</span>
+        <!-- Footer -->
+        <footer class="pt-24 flex justify-center md:justify-start opacity-20">
+            <div class="text-[8px] font-mono tracking-[0.5em] uppercase">
+                i use arch btw.
             </div>
         </footer>
 
