@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>G83/KU | Cyberpunk Arch Linux Portfolio</title>
+    <title>G83/KU | Arch Linux x Kosen</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
@@ -15,8 +15,8 @@
                 extend: {
                     colors: {
                         cyber: {
-                            black: '#020617',
-                            darker: '#0a0a0a',
+                            black: '#0a0515',
+                            darker: '#050209',
                             neon: {
                                 cyan: '#22d3ee',
                                 pink: '#f472b6',
@@ -34,162 +34,79 @@
         }
     </script>
     <link rel="stylesheet" href="./style.css">
-    <meta name="description" content="Arch Linuxを愛用する、今年度から高専生のこだわりが詰まったサイバーパンク風ポートフォリオ。">
+    <meta name="description" content="Arch Linux | Kosen student. Minimalist cyberpunk portfolio.">
 </head>
 
 <body class="selection:bg-cyber-neon-cyan selection:text-cyber-black overflow-x-hidden">
     <!-- Scanlines and Overlay -->
     <div
-        class="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(circle,transparent_0%,rgba(0,0,0,0.4)_100%)]">
+        class="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(circle,transparent_0%,rgba(0,0,0,0.6)_100%)]">
     </div>
 
-    <main class="relative z-10 max-w-5xl mx-auto px-4 py-12 md:py-24 space-y-24">
+    <main class="relative z-10 max-w-4xl mx-auto px-6 py-16 md:py-32 space-y-32">
 
         <!-- Hero Section -->
-        <header class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            <div class="md:col-span-12 lg:col-span-7 space-y-6">
-                <div
-                    class="inline-block px-3 py-1 bg-cyber-neon-cyan/10 border border-cyber-neon-cyan text-cyber-neon-cyan text-xs font-bold tracking-[0.2em] mb-4">
-                    SYSTEM STATUS: ONLINE
-                </div>
-                <h1 class="text-5xl md:text-7xl font-black leading-none">
-                    <span class="glitch-text" data-text="G83/KU">G83/KU</span>
-                </h1>
-                <p class="text-xl md:text-2xl text-cyber-neon-pink font-bold italic">
-                    > Kosen 1st Year | Arch Linux Enthusiast
-                </p>
-                <p class="max-w-xl text-slate-400 leading-relaxed">
-                    今年度から夢の高専生活をスタートさせた15歳。Arch
-                    Linuxを「生活の一部」として使いこなし、最小限のパッケージ構成で最大限のパフォーマンスを引き出すことに執着。サイバーパンクの世界観と低レイヤの技術に魅了され、ターミナルから世界を眺めています。
-                </p>
-                <div class="flex flex-wrap gap-4 pt-4">
-                    <a href="#" class="cyber-button">GITHUB</a>
-                    <a href="#"
-                        class="cyber-button border-cyber-neon-pink text-cyber-neon-pink hover:shadow-[0_4px_20px_rgba(244,114,182,0.5)]">TWITTER/X</a>
-                </div>
-            </div>
-
-            <!-- Neofetch Terminal -->
+        <header class="space-y-8 text-center md:text-left">
             <div
-                class="md:col-span-12 lg:col-span-5 terminal-box cyber-border group hover:border-cyber-neon-cyan transition-colors">
-                <div class="flex gap-1.5 mb-4 border-b border-slate-800 pb-2">
-                    <div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
-                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
-                    <div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
-                    <div class="ml-2 text-[10px] text-slate-500 font-bold uppercase">neofetch --kosen</div>
-                </div>
-                <div class="flex gap-4 items-start text-[10px] md:text-xs leading-tight">
-                    <pre class="text-cyber-neon-blue font-bold">
-      /\
-     /  \
-    /\   \
-   /      \
-  /   ,,   \
- /   |  |   \
-/   /    \   \
-   /      \
-                  </pre>
-                    <div class="space-y-1">
-                        <div class="font-bold text-cyber-neon-cyan">g83ku@kosen-os</div>
-                        <div class="text-slate-500">--------------</div>
-                        <div><span class="text-cyber-neon-pink">OS:</span> Arch Linux x86_64</div>
-                        <div><span class="text-cyber-neon-pink">Host:</span> Custom Build v1.0.0</div>
-                        <div><span class="text-cyber-neon-pink">Kernel:</span> 6.x.x-arch1-1</div>
-                        <div><span class="text-cyber-neon-pink">Uptime:</span> 1 year as Kosen student</div>
-                        <div><span class="text-cyber-neon-pink">Shell:</span> zsh / fish</div>
-                        <div><span class="text-cyber-neon-pink">WM:</span> Hyprland / Sway</div>
-                        <div><span class="text-cyber-neon-pink">Terminal:</span> Kitty / Foot</div>
-                        <div class="flex gap-1 mt-2">
-                            <div class="w-4 h-4 bg-cyber-black"></div>
-                            <div class="w-4 h-4 bg-red-500"></div>
-                            <div class="w-4 h-4 bg-green-500"></div>
-                            <div class="w-4 h-4 bg-yellow-500"></div>
-                            <div class="w-4 h-4 bg-cyber-neon-blue"></div>
-                            <div class="w-4 h-4 bg-cyber-neon-pink"></div>
-                            <div class="w-4 h-4 bg-cyber-neon-cyan"></div>
-                        </div>
-                    </div>
-                </div>
+                class="inline-block px-3 py-1 bg-cyber-neon-pink/10 border border-cyber-neon-pink text-cyber-neon-pink text-[10px] font-bold tracking-[0.3em] mb-4 uppercase">
+                Status: Minimalist Mode
+            </div>
+            <h1 class="text-6xl md:text-8xl font-black leading-none text-cyber-neon-cyan">
+                <span class="glitch-text" data-text="G83/KU">G83/KU</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-cyber-neon-pink font-bold italic opacity-80">
+                > Kosen 1st Yr | Arch Linux
+            </p>
+
+            <div class="flex flex-wrap justify-center md:justify-start gap-6 pt-8">
+                <a href="#" class="cyber-button flex items-center gap-2 group">
+                    <span class="text-sm">X / TWITTER</span>
+                </a>
+                <a href="#"
+                    class="cyber-button border-cyber-neon-pink text-cyber-neon-pink hover:shadow-[0_4px_20px_rgba(244,114,182,0.5)] flex items-center gap-2 group">
+                    <span class="text-sm">DISCORD</span>
+                </a>
+                <a href="#" class="p-2 border border-slate-800 hover:border-cyber-neon-yellow transition-colors group"
+                    title="GitHub">
+                    <svg class="w-6 h-6 text-slate-500 group-hover:text-cyber-neon-yellow" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                    </svg>
+                </a>
             </div>
         </header>
 
-        <!-- Tech Stack Section -->
-        <section class="space-y-12">
-            <h2 class="text-3xl font-black flex items-center gap-4">
-                <span class="text-cyber-neon-yellow">#</span> SKILLS & TOOLS
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div
-                    class="p-6 border border-slate-800 bg-cyber-darker/50 hover:border-cyber-neon-yellow transition-all group">
-                    <div class="text-cyber-neon-yellow font-bold mb-2">OS</div>
-                    <div class="text-sm font-bold uppercase tracking-widest group-hover:text-white">Arch Linux</div>
+        <!-- Minimal Neofetch -->
+        <section class="max-w-md mx-auto md:mx-0">
+            <div class="terminal-box cyber-border border-cyber-neon-cyan/30">
+                <div class="flex gap-1.5 mb-4 border-b border-slate-900 pb-2">
+                    <div class="w-2 h-2 rounded-full bg-cyber-neon-cyan"></div>
+                    <div class="text-[8px] text-slate-600 font-bold uppercase tracking-tighter">sys_info.log</div>
                 </div>
-                <div
-                    class="p-6 border border-slate-800 bg-cyber-darker/50 hover:border-cyber-neon-cyan transition-all group">
-                    <div class="text-cyber-neon-cyan font-bold mb-2">STYLE</div>
-                    <div class="text-sm font-bold uppercase tracking-widest group-hover:text-white">Tailwind CSS</div>
-                </div>
-                <div
-                    class="p-6 border border-slate-800 bg-cyber-darker/50 hover:border-cyber-neon-pink transition-all group">
-                    <div class="text-cyber-neon-pink font-bold mb-2">DEV</div>
-                    <div class="text-sm font-bold uppercase tracking-widest group-hover:text-white">Rust / C++</div>
-                </div>
-                <div
-                    class="p-6 border border-slate-800 bg-cyber-darker/50 hover:border-cyber-neon-blue transition-all group">
-                    <div class="text-cyber-neon-blue font-bold mb-2">EDITOR</div>
-                    <div class="text-sm font-bold uppercase tracking-widest group-hover:text-white">Neovim (NVChad)
+                <div class="flex gap-6 items-center text-xs">
+                    <pre class="text-cyber-neon-cyan font-bold opacity-50">
+  /\
+ /  \
+/    \
+      </pre>
+                    <div class="space-y-1 font-mono text-slate-400">
+                        <div><span class="text-cyber-neon-pink">OS:</span> Arch Linux</div>
+                        <div><span class="text-cyber-neon-pink">ID:</span> Kosen 1st Yr</div>
+                        <div><span class="text-cyber-neon-pink">ENV:</span> Hyprland / nvim</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Information Feed -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div class="space-y-6">
-                <h3 class="text-2xl font-bold italic">Latest Logs</h3>
-                <div class="space-y-4">
-                    <div
-                        class="border-l-2 border-cyber-neon-cyan pl-4 py-2 hover:bg-cyber-neon-cyan/5 transition-colors">
-                        <div class="text-[10px] text-slate-500 uppercase">2026.04.01 - 21:00</div>
-                        <div class="font-bold">入学式のあとにArch Linuxを再インストールした話</div>
-                    </div>
-                    <div class="border-l-2 border-slate-800 pl-4 py-2 hover:border-cyber-neon-pink transition-colors">
-                        <div class="text-[10px] text-slate-500 uppercase">2026.03.20 - 15:30</div>
-                        <div class="font-bold">Kosen生活に向けた最強のDotfiles構築</div>
-                    </div>
-                </div>
+        <!-- Minimal Footer -->
+        <footer
+            class="pt-12 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 opacity-50">
+            <div class="text-[10px] tracking-[0.4em] font-bold text-slate-500 uppercase">
+                Minimalist Cyberpunk Framework
             </div>
-
-            <div class="space-y-6">
-                <h3 class="text-2xl font-bold italic">Identity Matrix</h3>
-                <div class="terminal-box text-xs space-y-2 border-cyber-neon-pink/30">
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">USER_LEVEL:</span>
-                        <span class="text-cyber-neon-pink uppercase">Kosen Freshman</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">SPECIALIZATION:</span>
-                        <span class="text-cyber-neon-pink uppercase">Low Level & Web</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">FAV_WM:</span>
-                        <span class="text-cyber-neon-pink uppercase">Hyprland</span>
-                    </div>
-                    <div class="w-full bg-slate-900 h-1 mt-4">
-                        <div class="bg-cyber-neon-pink h-full w-3/4 animate-pulse"></div>
-                    </div>
-                    <div class="text-[10px] text-right text-cyber-neon-pink">DETERMINATION: 75%</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="pt-12 border-t border-slate-900 text-center space-y-4">
-            <div class="text-[10px] text-slate-600 tracking-[0.3em] font-bold">
-                BUILT WITH ARCH LINUX & TAILWIND CSS
-            </div>
-            <div class="text-xs text-slate-500">
-                &copy; 2026 G83/KU. <span class="text-cyber-neon-cyan">I use Arch btw.</span>
+            <div class="text-[10px] font-mono">
+                &copy; 2026 G83/KU // <span class="text-cyber-neon-cyan">I use Arch btw.</span>
             </div>
         </footer>
 

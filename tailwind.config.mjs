@@ -8,8 +8,8 @@ export default {
     extend: {
       colors: {
         cyber: {
-          black: '#020617', // Slate 950
-          darker: '#0a0a0a',
+          black: '#0a0515', // Dark Purple
+          darker: '#050209',
           neon: {
             cyan: '#22d3ee',
             pink: '#f472b6',
