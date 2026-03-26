@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 def generate_frames():
     # 0番のカメラ(OBS Virtual Camera等)をオープン
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(4)
     while True:
         success, frame = camera.read()
         if not success:
