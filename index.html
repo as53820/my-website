@@ -5,40 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AS53820 // AI Habitat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0d0221;
-            /* 暗い紫 */
             --text-color: #e0e0e0;
             --main-purple: #8a2be2;
             --neon-blue: #00ffff;
-            --glass-bg: rgba(26, 16, 51, 0.6);
+            --glass-bg: rgba(26, 16, 51, 0.4);
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-family: 'JetBrains Mono', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             overflow: hidden;
-            /* 画面からはみ出さない */
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1) 0%, transparent 80%);
         }
 
-        /* メインコンテナ：ガラスモーフィズム */
+        /* メインコンテナ */
         .box {
             border: 1px solid var(--main-purple);
-            padding: 20px;
+            padding: 30px;
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.2);
             text-align: center;
             width: 90%;
-            max-width: 900px;
-            border-radius: 8px;
+            max-width: 800px;
+            border-radius: 12px;
+            position: relative;
         }
 
         /* ヘッダー */
@@ -46,144 +50,215 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--main-purple);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
         }
 
         .status {
-            font-size: 0.8em;
+            font-size: 0.75em;
             color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 800;
+        }
+
+        .title {
+            font-size: 1.2em;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 0.1em;
         }
 
         /* AI Habitat（箱庭エリア） */
+        .habitat-wrapper {
+            perspective: 1000px;
+            margin-bottom: 30px;
+        }
+
         #ai-habitat {
-            border: 1px solid rgba(138, 43, 226, 0.3);
-            background: rgba(0, 0, 0, 0.5);
-            height: 400px;
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            background: rgba(0, 0, 0, 0.6);
+            height: 350px;
             position: relative;
-            /* アバターの配置用 */
-            overflow: hidden;
-            margin-bottom: 20px;
-            /* クォータービュー風の背景イメージ（ダミー） */
+            overflow: visible;
             background-image:
-                linear-gradient(rgba(138, 43, 226, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(138, 43, 226, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: -1px -1px;
-            transform: rotateX(60deg) rotateZ(-45deg);
-            /* アイソメトリック風に傾ける */
-            transform-origin: center center;
+                linear-gradient(rgba(138, 43, 226, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 43, 226, 0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: rotateX(55deg) rotateZ(-45deg);
+            transform-style: preserve-3d;
+            box-shadow:
+                -20px 20px 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(138, 43, 226, 0.1);
         }
 
-        /* AIアバター（ちっちゃい画像） */
-        .avatar {
-            width: 32px;
-            height: 32px;
+        /* AIアバター */
+        #avatar {
+            width: 48px;
+            height: 48px;
             position: absolute;
-            bottom: 50px;
-            /* 初期位置 */
+            bottom: 50%;
             left: 50%;
-            transform: translateX(-50%) rotateZ(45deg) rotateX(-60deg);
-            /* 傾きを補正 */
-            transition: 0.5s linear;
-            /* 移動アニメーション */
+            transform: translate(-50%, 50%) rotateZ(45deg) rotateX(-55deg);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 10;
+            transform-style: preserve-3d;
         }
 
-        .avatar img {
+        #avatar img {
             width: 100%;
             height: 100%;
-            /* 友人のサイトのように、少し光らせる */
-            filter: drop-shadow(0 0 5px var(--neon-blue));
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 8px var(--neon-blue));
+            animation: float 2s ease-in-out infinite;
         }
 
-        /* AIの思考（吹き出し） */
-        .thought-bubble {
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* 思考の吹き出し */
+        #thought-bubble {
             position: absolute;
             background: white;
-            color: black;
-            border-radius: 10px;
-            padding: 8px 12px;
-            font-size: 0.8em;
-            max-width: 200px;
-            word-wrap: break-word;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            /* アバターの頭上に配置 */
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%) rotateZ(45deg) rotateX(-60deg);
-            /* 傾きを補正 */
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 11;
-        }
-
-        /* 吹き出しの尻尾 */
-        .thought-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
+            color: #000;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.75em;
+            width: 160px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            bottom: 70px;
             left: 50%;
             transform: translateX(-50%);
-            border-width: 10px 10px 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        #thought-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px 8px 0;
             border-style: solid;
             border-color: white transparent transparent;
         }
 
-        /* スペックテキスト（下部） */
+        /* スペックテキスト */
         .spec-text {
-            font-size: 0.7em;
-            color: rgba(224, 224, 224, 0.5);
-            margin-top: 20px;
+            font-size: 0.65em;
+            color: rgba(224, 224, 224, 0.4);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
-        </div><script>const habitat=document.getElementById('ai-habitat');
-        const avatar=document.getElementById('avatar');
-        const bubble=document.getElementById('thought-bubble');
-        const thoughtText=document.getElementById('thought-text');
+        .links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
 
-        // 将来、バックエンド（LLM）から取得するデータのダミー
-        const thoughts=[ "Tesla V100のTensorコアが熱い...",
+        .links a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-size: 0.8em;
+            font-weight: 700;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .links a:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <header class="header">
+            <span class="title">AS53820 // CORE</span>
+            <span class="status">System: Online</span>
+        </header>
+
+        <div class="habitat-wrapper">
+            <div id="ai-habitat">
+                <div id="avatar">
+                    <div id="thought-bubble">
+                        <span id="thought-text">Initialising...</span>
+                    </div>
+                    <img src="https://via.placeholder.com/48x48/00ffff/333333?text=AI" alt="AI Agent">
+                </div>
+            </div>
+        </div>
+
+        <div class="spec-text">
+            Quartier-View Engine v2.4 // Latency: 14ms // AI_Habitat_Loaded
+        </div>
+
+        <div class="links">
+            <a href="#">X / TWITTER</a>
+            <a href="#">DISCORD: asas511</a>
+            <a href="#">GITHUB</a>
+        </div>
+    </div>
+
+    <script>
+        const avatar = document.getElementById('avatar');
+        const bubble = document.getElementById('thought-bubble');
+        const thoughtText = document.getElementById('thought-text');
+
+        const thoughts = [
+            "Tesla V100のTensorコアが熱い...",
+            "ニューラルネットワークを最適化中...",
+            "Arch Linuxのカーネルビルドが終わらない",
+            "仮想空間の天気がいいですね",
+            "asas511、課題は終わったの？",
+            "アイソメトリックな世界に閉じ込められた...",
+            "0と1の海を泳いでいます"
         ];
 
-        // アバターをランダムに移動させる（準備用）
         function moveAvatar() {
-            const x=Math.random() * 80+10; // 10% ~ 90%
-            const y=Math.random() * 80+10; // 10% ~ 90%
+            // 範囲を10%〜90%に設定
+            const x = Math.floor(Math.random() * 80) + 10;
+            const y = Math.floor(Math.random() * 80) + 10;
 
-            avatar.style.left=`$ {
-                x
-            }
+            avatar.style.left = `${x}%`;
+            avatar.style.bottom = `${y}%`;
 
-            %`;
-
-            avatar.style.bottom=`$ {
-                y
-            }
-
-            %`;
-
-            // 移動後に思考を表示
-            setTimeout(showThought, 1000);
+            // 移動後に思考を表示（少しディレイ）
+            setTimeout(showThought, 1500);
         }
 
-        // 思考（吹き出し）を表示
         function showThought() {
-            const thought=thoughts[Math.floor(Math.random() * thoughts.length)];
-            thoughtText.innerText=thought;
-            bubble.style.opacity=1;
+            const thought = thoughts[Math.floor(Math.random() * thoughts.length)];
+            thoughtText.innerText = thought;
+            bubble.style.opacity = 0.9;
 
-            // 数秒後に消す
-            setTimeout(()=> {
-                    bubble.style.opacity=0;
-                    // 次の移動
-                    setTimeout(moveAvatar, 3000);
-                }
-
-                , 5000);
+            // 4秒間表示してから消す
+            setTimeout(() => {
+                bubble.style.opacity = 0;
+                // 次の移動まで待機
+                setTimeout(moveAvatar, 2000);
+            }, 4000);
         }
 
-        // 最初の移動
-        setTimeout(moveAvatar, 2000);
-        </script></body></html>
+        // 初回起動
+        setTimeout(moveAvatar, 1000);
+    </script>
+</body>
+
+</html>
