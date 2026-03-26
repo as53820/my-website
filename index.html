@@ -122,9 +122,7 @@
 
 <body>
     <div id="viewport">
-        <video id="bg-video" autoplay loop muted playsinline>
-            <source src="bg-movie.mp4" type="video/mp4">
-        </video>
+        <video id="webcam" autoplay playsinline muted></video>
     </div>
 
     <div class="profile">
@@ -135,26 +133,40 @@
         </div>
         <div class="links">
             <a href="https://github.com/as53820">GitHub</a>
-            <a href="#">Discord:asas511</a>
+            <a href="#">Discord</a>
             <a href="#">X</a>
         </div>
     </div>
 
     <style>
-        #bg-video {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -100;
-            background-size: cover;
-            filter: brightness(0.6);
-            /* 映像を少し暗くして文字を見やすく */
+        #webcam {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            filter: brightness(0.5);
+            /* 映像を暗くして文字を読みやすく */
         }
     </style>
+
+    <script>
+        async function startCamera() {
+            try {
+                // カメラ（仮想カメラ含む）のストリームを取得
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                });
+                const video = document.getElementById('webcam');
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Camera Error: ", err);
+            }
+        }
+        // ページ読み込み時に自動実行
+        startCamera();
+    </script>
 </body>
 
 </html>
