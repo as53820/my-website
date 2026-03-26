@@ -121,23 +121,40 @@
 </head>
 
 <body>
-
     <div id="viewport">
+        <video id="bg-video" autoplay loop muted playsinline>
+            <source src="bg-movie.mp4" type="video/mp4">
+        </video>
     </div>
 
     <div class="profile">
-        <div class="name">AS5382</div>
+        <div class="name">AS53820</div>
         <div class="desc">
             Arch Linux / KOSEN Student<br>
             i7-14700K / Tesla V100 Integration
         </div>
         <div class="links">
             <a href="https://github.com/as53820">GitHub</a>
-            <a href="#">Discord</a>
+            <a href="#">Discord:asas511</a>
             <a href="#">X</a>
         </div>
     </div>
 
+    <style>
+        #bg-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            background-size: cover;
+            filter: brightness(0.6);
+            /* 映像を少し暗くして文字を見やすく */
+        }
+    </style>
 </body>
 
 </html>
