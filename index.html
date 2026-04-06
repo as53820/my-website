@@ -4,110 +4,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>as53820 Profile</title>
     <style>
-        /* 背景真っ暗、無駄な囲いなし */
+        /* 背景は完全な黒、余白は広めにとる */
         body {
             background-color: #000;
-            color: #fff;
-            font-family: monospace;
-            /* ターミナル風フォント */
+            color: #d4d4d4;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
             margin: 0;
-            padding: 40px 20px;
-            line-height: 1.6;
+            padding: 10vh 10vw;
+            /* 画面中央に寄せる */
+            letter-spacing: 0.05em;
         }
 
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* 名前・タイトル */
+        /* ユーザー名：紫のアクセント */
         h1 {
-            font-size: 28px;
-            color: #bf94ff;
-            /* 明るい紫 */
-            margin-bottom: 5px;
-        }
-
-        .status {
-            color: #ffee58;
-            /* 明るい黄色 */
+            font-size: 1.8rem;
+            color: #bd93f9;
+            /* Dracula Purple */
+            margin: 0 0 10px 0;
             font-weight: bold;
-            margin-bottom: 30px;
         }
 
-        /* プロフィールセクション */
-        .info {
+        /* サブタイトル：黄色のアクセント */
+        .subtitle {
+            color: #f1fa8c;
+            /* Dracula Yellow */
+            font-size: 0.9rem;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+
+        /* 各セクション：囲いなし、左の縦線のみ */
+        section {
             margin-bottom: 40px;
+            border-left: 2px solid #444;
+            padding-left: 20px;
         }
 
-        .info div {
-            margin: 10px 0;
-            border-bottom: 1px solid #222;
-            /* 控えめな区切り線 */
-            padding-bottom: 5px;
+        .item {
+            margin: 15px 0;
         }
 
         .label {
-            color: #ffee58;
-            display: inline-block;
-            width: 100px;
+            color: #6272a4;
+            /* 控えめな青灰色 */
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
         }
 
-        /* SNSセクション */
-        .sns {
+        .value {
+            font-size: 1.1rem;
+            color: #f8f8f2;
+        }
+
+        /* SNS：装飾なし、テキストのみ */
+        .sns-list {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
-        .sns-item {
+        .sns-link {
             text-decoration: none;
-            color: #fff;
+            color: #f8f8f2;
+            font-size: 1rem;
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            width: 100%;
+            max-width: 250px;
         }
 
-        .sns-label {
-            color: #bf94ff;
-            font-weight: bold;
+        .sns-link:hover {
+            color: #bd93f9;
         }
 
-        .sns-id {
-            color: #fff;
+        /* 最後にさりげなくカーソルを点滅させる演出 */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2rem;
+            background-color: #bd93f9;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
-        <h1>About Me</h1>
-        <div class="status">KOSEN Student / Dormitory</div>
+    <header>
+        <h1>About Me<span class="cursor"></span></h1>
+        <div class="subtitle">苫小牧高専 / 寮生</div>
+    </header>
 
-        <div class="info">
-            <div><span class="label">School</span>苫小牧高専</div>
-            <div><span class="label">Birthday</span>[あなたの誕生日]</div>
+    <section>
+        <div class="item">
+            <span class="label">School</span>
+            <span class="value">NIT, Tomakomai College</span>
         </div>
-
-        <div class="sns">
-            <div class="sns-item">
-                <span class="sns-label">Discord</span>
-                <span class="sns-id">[表示名]</span>
-            </div>
-            <div class="sns-item">
-                <span class="sns-label">LINE</span>
-                <span class="sns-id">[表示名]</span>
-            </div>
-            <div class="sns-item">
-                <span class="sns-label">X</span>
-                <span class="sns-id">[表示名]</span>
-            </div>
+        <div class="item">
+            <span class="label">Birthday</span>
+            <span class="value">[誕生日を入力]</span>
         </div>
-    </div>
+    </section>
 
-</body>
-
-</html>
+    <section>
+        <div class="sns-list">
+            <div class="sns-link">
+                <span style="color: #6272a4;">Discord</span>
+                <span>[表示名]</span>
+            </div>
+            <div class="sns-link">
+                <span style="color:
