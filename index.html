@@ -4,133 +4,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me!</title>
+    <title>Profile</title>
     <style>
-        /* 基本スタイル：紫と黄色のポップな配色 */
+        /* 背景真っ暗、無駄な囲いなし */
         body {
-            font-family: 'Hiragino Maru Gothic ProN', 'Rounded Mplus 1c', 'Helvetica Neue', Arial, sans-serif;
-            /* 丸ゴシック系でポップに */
-            background-color: #f7f3ff;
-            /* 薄い紫の背景 */
-            color: #333;
+            background-color: #000;
+            color: #fff;
+            font-family: monospace;
+            /* ターミナル風フォント */
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
         }
 
-        /* メインコンテナ：明るい黄色と丸み */
         .container {
-            background-color: #ffeb3b;
-            /* 明るい黄色 */
-            width: 100%;
-            max-width: 400px;
-            border-radius: 30px;
-            /* 角を大きく丸く */
-            box-shadow: 0 8px 20px rgba(111, 63, 191, 0.3);
-            /* 紫系の影 */
-            padding: 40px 30px;
-            text-align: center;
-            box-sizing: border-box;
-            border: 4px solid #6f3fbf;
-            /* 濃い紫の枠線 */
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        /* 見出し：紫で元気に */
+        /* 名前・タイトル */
         h1 {
-            font-size: 32px;
+            font-size: 28px;
+            color: #bf94ff;
+            /* 明るい紫 */
             margin-bottom: 5px;
-            color: #6f3fbf;
-            /* 濃い紫 */
-            text-shadow: 2px 2px 0px #fff;
-            /* 白い影で立体感 */
         }
 
-        h2 {
-            font-size: 18px;
+        .status {
+            color: #ffee58;
+            /* 明るい黄色 */
             font-weight: bold;
-            color: #555;
-            margin-top: 0;
             margin-bottom: 30px;
-            background-color: #fff;
-            /* 白い背景で読みやすく */
+        }
+
+        /* プロフィールセクション */
+        .info {
+            margin-bottom: 40px;
+        }
+
+        .info div {
+            margin: 10px 0;
+            border-bottom: 1px solid #222;
+            /* 控えめな区切り線 */
+            padding-bottom: 5px;
+        }
+
+        .label {
+            color: #ffee58;
             display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
+            width: 100px;
         }
 
-        /* プロフィール情報：白背景に紫の文字 */
-        .profile-info {
-            text-align: left;
-            margin-bottom: 35px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 20px;
-            border: 2px solid #6f3fbf;
-        }
-
-        .profile-info p {
-            margin: 15px 0;
-            font-size: 18px;
-            line-height: 1.5;
-            display: flex;
-            align-items: center;
-        }
-
-        .profile-info strong {
-            color: #6f3fbf;
-            display: inline-block;
-            width: 110px;
-            font-weight: bold;
-        }
-
-        /* アイコン（絵文字）を追加してポップに */
-        .icon {
-            margin-right: 10px;
-            font-size: 20px;
-        }
-
-        /* SNSリンク：紫ベースのボタン */
-        .sns-links {
+        /* SNSセクション */
+        .sns {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
         .sns-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #6f3fbf;
-            /* 濃い紫 */
-            padding: 15px 20px;
-            border-radius: 15px;
             text-decoration: none;
             color: #fff;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 0px #4a2a80;
-            /* 立体的な影 */
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
         }
 
-        /* タップ時のアニメーション */
-        .sns-item:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0px #4a2a80;
-        }
-
-        .sns-name {
+        .sns-label {
+            color: #bf94ff;
             font-weight: bold;
-            font-size: 18px;
-            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
         }
 
         .sns-id {
-            color: #ffeb3b;
-            /* 黄色でIDを表示 */
-            font-size: 16px;
-            font-weight: bold;
+            color: #fff;
         }
     </style>
 </head>
@@ -138,27 +84,26 @@
 <body>
 
     <div class="container">
-        <h1>About Me!</h1>
-        <h2>こんにちは、よろしくね！🌟</h2>
+        <h1>About Me</h1>
+        <div class="status">KOSEN Student / Dormitory</div>
 
-        <div class="profile-info">
-            <p><span class="icon">🏫</span><strong>所属:</strong> 苫小牧高専</p>
-            <p><span class="icon">🏠</span><strong>住まい:</strong> 寮生</p>
-            <p><span class="icon">🎂</span><strong>誕生日:</strong> [あなたの誕生日を入力]</p>
+        <div class="info">
+            <div><span class="label">School</span>苫小牧高専</div>
+            <div><span class="label">Birthday</span>[あなたの誕生日]</div>
         </div>
 
-        <div class="sns-links">
-            <div class="sns-item discord">
-                <span class="sns-name">Discord</span>
-                <span class="sns-id">[Discordの表示名]</span>
+        <div class="sns">
+            <div class="sns-item">
+                <span class="sns-label">Discord</span>
+                <span class="sns-id">[表示名]</span>
             </div>
-            <div class="sns-item line">
-                <span class="sns-name">LINE</span>
-                <span class="sns-id">[LINEの表示名]</span>
+            <div class="sns-item">
+                <span class="sns-label">LINE</span>
+                <span class="sns-id">[表示名]</span>
             </div>
-            <div class="sns-item x">
-                <span class="sns-name">X</span>
-                <span class="sns-id">[Xの表示名]</span>
+            <div class="sns-item">
+                <span class="sns-label">X</span>
+                <span class="sns-id">[表示名]</span>
             </div>
         </div>
     </div>
