@@ -4,22 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P2P Othello - Responsive</title>
+    <title>P2P Othello - QR Pro</title>
+    <!-- External Libraries -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         :root {
-            --bg-color: #f0f0f0;
+            --bg-color: #f8f9fa;
             --board-color: #2e7d32;
             --cell-border: #1b5e20;
-            --black-stone: #000;
-            --white-stone: #fff;
+            --black-stone: #1a1a1a;
+            --white-stone: #ffffff;
             --highlight-color: rgba(255, 255, 255, 0.3);
-            --text-color: #333;
-            --accent-color: #007bff;
+            --text-color: #2d3436;
+            --accent-color: #0984e3;
+            --secondary-color: #636e72;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -33,39 +37,53 @@
 
         h1 {
             margin: 0 0 20px 0;
-            font-size: 1.8rem;
-            color: #2c3e50;
+            font-size: 2rem;
+            color: #2d3436;
+            font-weight: 800;
         }
 
-        /* セットアップ画面 */
+        /* Setup Screen */
         #setup-screen {
-            text-align: center;
-            background: #fff;
+            background: white;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            max-width: 450px;
             width: 100%;
+            text-align: center;
         }
 
         .id-display {
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 2.5rem;
+            font-weight: 900;
             color: var(--accent-color);
+            margin: 10px 0;
+            letter-spacing: 3px;
+        }
+
+        .id-label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
             margin: 15px 0;
-            letter-spacing: 2px;
         }
 
         input[type="number"] {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            padding: 15px;
+            margin: 20px 0 10px 0;
+            border: 2px solid #edf2f7;
+            border-radius: 12px;
+            font-size: 1.2rem;
             box-sizing: border-box;
             outline: none;
             transition: border-color 0.2s;
+            text-align: center;
         }
 
         input[type="number"]:focus {
@@ -73,33 +91,85 @@
         }
 
         button {
-            width: 100%;
-            padding: 12px;
+            padding: 14px 20px;
             background-color: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: transform 0.1s, background 0.2s;
-            margin-top: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         button:hover {
-            background-color: #0056b3;
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
 
         button:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
 
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
         }
 
-        /* ゲーム画面 */
+        .btn-secondary {
+            background-color: #f1f2f6;
+            color: #2f3542;
+        }
+
+        #connect-btn {
+            width: 100%;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* QR Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        /* Game Screen */
         #game-screen {
             display: none;
             flex-direction: column;
@@ -110,9 +180,9 @@
 
         #info-panel {
             width: 100%;
-            background: #fff;
-            padding: 15px;
-            border-radius: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             display: flex;
@@ -121,25 +191,19 @@
             box-sizing: border-box;
         }
 
-        .status {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
         .score {
-            font-size: 1.2rem;
-            font-weight: bold;
             display: flex;
-            align-items: center;
-            gap: 15px;
+            gap: 20px;
+            font-weight: 800;
+            font-size: 1.3rem;
         }
 
         .stone-icon {
             display: inline-block;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             vertical-align: middle;
         }
 
@@ -151,20 +215,20 @@
             background-color: var(--white-stone);
         }
 
-        /* 盤面 */
+        /* Board */
         #board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
             background-color: var(--board-color);
-            border: 6px solid var(--cell-border);
-            border-radius: 8px;
-            width: 90vw;
-            height: 90vw;
+            border: 8px solid var(--cell-border);
+            border-radius: 12px;
+            width: 92vw;
+            height: 92vw;
             max-width: 500px;
             max-height: 500px;
             box-sizing: border-box;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .cell {
@@ -179,18 +243,18 @@
         .cell.valid::after {
             content: '';
             position: absolute;
-            width: 25%;
-            height: 25%;
+            width: 20%;
+            height: 20%;
             background-color: var(--highlight-color);
             border-radius: 50%;
         }
 
         .stone {
-            width: 85%;
-            height: 85%;
+            width: 88%;
+            height: 88%;
             border-radius: 50%;
-            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .stone.black {
@@ -201,15 +265,29 @@
             background-color: var(--white-stone);
         }
 
-        .stone.flipping {
-            transform: rotateY(180deg) scale(1.1);
+        .pass-msg {
+            position: fixed;
+            top: 50%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            animation: fadeOut 2s forwards;
         }
 
-        #reset-btn {
-            background-color: #6c757d;
-            margin-top: 20px;
-            width: auto;
-            padding: 10px 30px;
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            70% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
     </style>
 </head>
@@ -217,246 +295,248 @@
 <body>
     <h1>P2P Othello</h1>
 
+    <!-- Setup -->
     <div id="setup-screen">
-        <p>あなたのID（相手に教えてください）</p>
+        <div class="id-label">あなたの対戦ID</div>
         <div class="id-display" id="my-id">読み込み中...</div>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        <p>相手のIDを入力して対戦開始</p>
+
+        <div class="button-group">
+            <button class="btn-outline" style="flex:1" onclick="showQR()">
+                <span>📱</span> QR表示
+            </button>
+            <button class="btn-outline" style="flex:1" onclick="startScanner()">
+                <span>📷</span> QR読取
+            </button>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #edf2f7; margin: 25px 0;">
+
+        <div class="id-label">相手のIDを入力</div>
         <input type="number" id="peer-id" placeholder="6桁のIDを入力">
-        <button id="connect-btn">接続して対戦</button>
-        <p id="setup-status" style="margin-top: 15px; font-size: 0.9rem; color: #666;"></p>
+        <button id="connect-btn" onclick="manualConnect()">対戦を開始する</button>
+        <p id="setup-status" style="margin-top: 15px; font-size: 0.9rem; color: #718096;"></p>
     </div>
 
+    <!-- QR Modals -->
+    <div id="qr-modal" class="modal" onclick="closeModal('qr-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>あなたの対戦用QRコード</h3>
+            <div id="qrcode"></div>
+            <p style="font-size: 0.9rem; color: #666;">相手にこのコードを読み取ってもらってください</p>
+            <button class="btn-secondary" style="width:100%" onclick="closeModal('qr-modal')">閉じる</button>
+        </div>
+    </div>
+
+    <div id="scan-modal" class="modal" onclick="stopScanner()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>QRコードを読み取る</h3>
+            <div id="reader"></div>
+            <p style="font-size: 0.8rem; color: #e74c3c; margin-top:10px;" id="scan-error"></p>
+            <button class="btn-secondary" style="width:100%; margin-top:20px;" onclick="stopScanner()">キャンセル</button>
+        </div>
+    </div>
+
+    <!-- Game -->
     <div id="game-screen">
         <div id="info-panel">
             <div class="score">
                 <div><span class="stone-icon black-icon"></span> <span id="black-score">2</span></div>
                 <div><span class="stone-icon white-icon"></span> <span id="white-score">2</span></div>
             </div>
-            <div id="status-text" class="status">接続中...</div>
+            <div id="status-text" style="font-weight: 700;">待機中...</div>
         </div>
         <div id="board"></div>
-        <button id="reset-btn" style="display: none;">再戦する</button>
+        <button id="reset-btn" style="background:#636e72; margin-top:20px; display:none;"
+            onclick="requestReset()">再戦する</button>
     </div>
 
     <script>
-        // --- ゲーム定数と状態 ---
         const EMPTY = 0, BLACK = 1, WHITE = 2;
         let board = Array(8).fill().map(() => Array(8).fill(EMPTY));
-        let myColor = null; // 1: Black (Host), 2: White (Guest)
-        let turn = BLACK;
-        let peer, conn;
+        let myColor = null, turn = BLACK, peer, conn, html5QrCode;
 
-        // --- PeerJS セットアップ ---
-        const myGeneratedId = Math.floor(100000 + Math.random() * 900000).toString();
-        peer = new Peer(myGeneratedId);
+        // --- PeerJS & Lifecycle ---
+        const myId = Math.floor(100000 + Math.random() * 900000).toString();
+        peer = new Peer(myId);
 
         peer.on('open', (id) => {
             document.getElementById('my-id').innerText = id;
-            updateSetupStatus("相手の接続を待機しています...");
+            updateStatus("相手の接続を待っています...");
+            // Pre-generate QR
+            new QRCode(document.getElementById("qrcode"), {
+                text: id,
+                width: 200,
+                height: 200
+            });
         });
 
-        // ホストとして接続を受ける
         peer.on('connection', (c) => {
-            if (conn) { c.close(); return; }
+            if (conn) return c.close();
             conn = c;
             myColor = BLACK;
-            setupConnection();
+            bindEvents();
         });
 
-        // ゲストとして接続する
-        document.getElementById('connect-btn').addEventListener('click', () => {
-            const remoteId = document.getElementById('peer-id').value;
-            if (!remoteId || remoteId.length !== 6) {
-                alert("6桁の有効なIDを入力してください");
-                return;
-            }
-            updateSetupStatus("接続を試行しています...");
-            conn = peer.connect(remoteId);
+        function manualConnect() {
+            const rid = document.getElementById('peer-id').value;
+            if (rid.length !== 6) return alert("6桁のIDを入力してください");
+            connectTo(rid);
+        }
+
+        function connectTo(rid) {
+            updateStatus("接続中...");
+            conn = peer.connect(rid);
             myColor = WHITE;
-            setupConnection();
-        });
+            bindEvents();
+        }
 
-        function setupConnection() {
-            conn.on('open', () => {
-                startGame();
+        function bindEvents() {
+            conn.on('open', () => startGame());
+            conn.on('data', (d) => {
+                if (d.type === 'move') handleMove(d.r, d.c, d.color);
+                if (d.type === 'reset') resetGame();
             });
+            conn.on('close', () => { alert("対戦が終了しました"); location.reload(); });
+        }
 
-            conn.on('data', (data) => {
-                if (data.type === 'move') {
-                    handleRemoteMove(data.r, data.c, data.color);
-                } else if (data.type === 'reset') {
-                    initBoard();
-                    updateUI();
+        // --- QR Features ---
+        function showQR() { document.getElementById('qr-modal').style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function startScanner() {
+            document.getElementById('scan-modal').style.display = 'flex';
+            html5QrCode = new Html5Qrcode("reader");
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
+                if (decodedText.length === 6) {
+                    stopScanner();
+                    connectTo(decodedText);
                 }
-            });
-
-            conn.on('close', () => {
-                alert("対戦相手との接続が切れました。");
-                location.reload();
-            });
-
-            conn.on('error', (err) => {
-                console.error(err);
-                alert("接続エラーが発生しました。");
-                location.reload();
+            }).catch(err => {
+                document.getElementById('scan-error').innerText = "カメラの起動に失敗しました。";
             });
         }
 
-        function updateSetupStatus(msg) {
-            document.getElementById('setup-status').innerText = msg;
+        function stopScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode = null;
+                    closeModal('scan-modal');
+                }).catch(() => closeModal('scan-modal'));
+            } else {
+                closeModal('scan-modal');
+            }
         }
 
-        // --- ゲームエンジン ---
+        // --- Game Logic ---
         function startGame() {
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
-            initBoard();
+            resetGame();
+        }
+
+        function resetGame() {
+            board = Array(8).fill().map(() => Array(8).fill(EMPTY));
+            board[3][3] = WHITE; board[4][4] = WHITE;
+            board[3][4] = BLACK; board[4][3] = BLACK;
+            turn = BLACK;
             updateUI();
         }
 
-        function initBoard() {
-            board = Array(8).fill().map(() => Array(8).fill(EMPTY));
-            board[3][3] = WHITE;
-            board[4][4] = WHITE;
-            board[3][4] = BLACK;
-            board[4][3] = BLACK;
-            turn = BLACK;
-            document.getElementById('reset-btn').style.display = 'none';
-        }
-
         function updateUI() {
-            const boardEl = document.getElementById('board');
-            boardEl.innerHTML = '';
-
-            let bCount = 0, wCount = 0;
+            const bEl = document.getElementById('board');
+            bEl.innerHTML = '';
+            let b = 0, w = 0;
 
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-
                     if (board[r][c] !== EMPTY) {
-                        const stone = document.createElement('div');
-                        stone.className = `stone ${board[r][c] === BLACK ? 'black' : 'white'}`;
-                        cell.appendChild(stone);
-                        if (board[r][c] === BLACK) bCount++; else wCount++;
-                    } else if (turn === myColor && canPlace(r, c, myColor)) {
+                        const s = document.createElement('div');
+                        s.className = `stone ${board[r][c] === BLACK ? 'black' : 'white'}`;
+                        cell.appendChild(s);
+                        board[r][c] === BLACK ? b++ : w++;
+                    } else if (turn === myColor && getFlips(r, c, myColor).length > 0) {
                         cell.classList.add('valid');
-                        cell.addEventListener('click', () => handleLocalMove(r, c));
+                        cell.onclick = () => makeMove(r, c);
                     }
-                    boardEl.appendChild(cell);
+                    bEl.appendChild(cell);
                 }
             }
 
-            document.getElementById('black-score').innerText = bCount;
-            document.getElementById('white-score').innerText = wCount;
+            document.getElementById('black-score').innerText = b;
+            document.getElementById('white-score').innerText = w;
+            const sText = document.getElementById('status-text');
+            sText.innerText = turn === myColor ? "あなたの番です" : "相手の番です";
+            sText.style.color = turn === myColor ? "#0984e3" : "#636e72";
 
-            const statusEl = document.getElementById('status-text');
-            if (turn === myColor) {
-                statusEl.innerText = "あなたの番です (" + (myColor === BLACK ? "黒" : "白") + ")";
-                statusEl.style.color = varToHex('--accent-color');
-            } else {
-                statusEl.innerText = "相手の番です... (" + (turn === BLACK ? "黒" : "白") + ")";
-                statusEl.style.color = "#555";
-            }
-
-            if (isGameOver()) {
-                let msg = "試合終了！ ";
-                if (bCount > wCount) msg += "黒の勝利！";
-                else if (wCount > bCount) msg += "白の勝利！";
-                else msg += "引き分け！";
-                statusEl.innerText = msg;
-                statusEl.style.color = "#d63031";
-                document.getElementById('reset-btn').style.display = 'inline-block';
+            if (isFinished()) {
+                const win = b > w ? "黒の勝ち！" : (w > b ? "白の勝ち！" : "引き分け！");
+                sText.innerText = `対戦終了！ ${win}`;
+                document.getElementById('reset-btn').style.display = 'block';
             }
         }
 
-        function varToHex(varName) {
-            return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-        }
-
-        function handleLocalMove(r, c) {
-            if (turn !== myColor) return;
-            const flipped = getFlippedPositions(r, c, myColor);
-            if (flipped.length === 0) return;
-
-            applyMove(r, c, myColor, flipped);
+        function makeMove(r, c) {
+            const flips = getFlips(r, c, myColor);
+            apply(r, c, myColor, flips);
             conn.send({ type: 'move', r, c, color: myColor });
-
-            toggleTurn();
+            next();
         }
 
-        function handleRemoteMove(r, c, color) {
-            const flipped = getFlippedPositions(r, c, color);
-            applyMove(r, c, color, flipped);
-            toggleTurn();
+        function handleMove(r, c, color) {
+            const flips = getFlips(r, c, color);
+            apply(r, c, color, flips);
+            next();
         }
 
-        function applyMove(r, c, color, flipped) {
+        function apply(r, c, color, flips) {
             board[r][c] = color;
-            flipped.forEach(pos => {
-                board[pos.r][pos.c] = color;
-            });
+            flips.forEach(p => board[p.r][p.c] = color);
             updateUI();
-
-            // アニメーション効果（簡易的に石にクラスをつけるならさらに工夫が必要）
         }
 
-        function toggleTurn() {
-            turn = (turn === BLACK) ? WHITE : BLACK;
-            if (!canAnyMove(turn)) {
-                if (!canAnyMove(turn === BLACK ? WHITE : BLACK)) {
-                    // 両者打てない = 終了
-                } else {
-                    alert((turn === BLACK ? "黒" : "白") + "がパスされました。");
-                    turn = (turn === BLACK ? WHITE : BLACK);
+        function next() {
+            turn = 3 - turn;
+            if (!canMove(turn)) {
+                if (canMove(3 - turn)) {
+                    showPass();
+                    turn = 3 - turn;
                 }
             }
             updateUI();
         }
 
-        function canPlace(r, c, color) {
-            return board[r][c] === EMPTY && getFlippedPositions(r, c, color).length > 0;
-        }
-
-        function getFlippedPositions(r, c, color) {
-            const opponent = (color === BLACK) ? WHITE : BLACK;
-            const directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-            let flipped = [];
-
-            directions.forEach(([dr, dc]) => {
-                let path = [];
-                let currR = r + dr, currC = c + dc;
-                while (currR >= 0 && currR < 8 && currC >= 0 && currC < 8 && board[currR][currC] === opponent) {
-                    path.push({ r: currR, c: currC });
-                    currR += dr; currC += dc;
+        function getFlips(r, c, color) {
+            const opp = 3 - color, dirs = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+            let flips = [];
+            dirs.forEach(([dr, dc]) => {
+                let path = [], cr = r + dr, cc = c + dc;
+                while (cr >= 0 && cr < 8 && cc >= 0 && cc < 8 && board[cr][cc] === opp) {
+                    path.push({ r: cr, c: cc }); cr += dr; cc += dc;
                 }
-                if (currR >= 0 && currR < 8 && currC >= 0 && currC < 8 && board[currR][currC] === color) {
-                    flipped = flipped.concat(path);
-                }
+                if (cr >= 0 && cr < 8 && cc >= 0 && cc < 8 && board[cr][cc] === color) flips.push(...path);
             });
-            return flipped;
+            return flips;
         }
 
-        function canAnyMove(color) {
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    if (canPlace(r, c, color)) return true;
-                }
-            }
+        function canMove(color) {
+            for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (board[r][c] === EMPTY && getFlips(r, c, color).length > 0) return true;
             return false;
         }
 
-        function isGameOver() {
-            return !canAnyMove(BLACK) && !canAnyMove(WHITE);
+        function isFinished() { return !canMove(BLACK) && !canMove(WHITE); }
+        function showPass() {
+            const div = document.createElement('div');
+            div.className = 'pass-msg';
+            div.innerText = (turn === BLACK ? "黒" : "白") + "はパスされました";
+            document.body.appendChild(div);
         }
 
-        document.getElementById('reset-btn').addEventListener('click', () => {
-            initBoard();
-            conn.send({ type: 'reset' });
-            updateUI();
-        });
+        function requestReset() { resetGame(); conn.send({ type: 'reset' }); }
+        function updateStatus(m) { document.getElementById('setup-status').innerText = m; }
     </script>
 </body>
 
