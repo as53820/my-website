@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>P2P Othello Test</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+
+<body>
+    <h1>P2P対戦テスト</h1>
+
+    <div>
+        <p>あなたのID: <b id="my-id">---</b></p>
+        <input type="number" id="peer-id" placeholder="相手の数字IDを入力">
+        <button onclick="connectToPeer()">接続</button>
+    </div>
+
+    <hr>
+
+    <div id="status">ステータス: 待機中...</div>
+    <div id="game-board"
+        style="font-family: monospace; white-space: pre; background: #eee; padding: 10px; margin-top: 10px;">
+    </div>
+    <button onclick="sendMove()">テスト送信（ランダムに打つ）</button>
+
+    <script>
+        // 6桁の数字IDを生成（簡易版）
+        const myId = Math.floor(100000 + Math.random() * 900000).toString();
+        document.getElementById('my-id').innerText = myId;
+
+        const peer = new Peer(myId); // 自分のIDでPeerを初期化
+        let conn;
+
+        // 相手から接続された時（ホスト側）
+        peer.on('connection', (c) => {
+            conn = c;
+            setupConnection();
+            document.getElementById('status').innerText = "ステータス: 相手が接続しました！";
+        });
+
+        // 自分から接続する時（ゲスト側）
+        function connectToPeer() {
+            const remoteId = document.getElementById('peer-id').value;
+            conn = peer.connect(remoteId);
+            setupConnection();
+            document.getElementById('status').innerText = "ステータス: 接続試行中...";
+        }
+
+        function setupConnection() {
+            conn.on('open', () => {
+                document.getElementById('status').innerText = "ステータス: 対戦中！";
+            });
+            // データを受信した時
+            conn.on('data', (data) => {
+                document.getElementById('game-board').innerText = "受信した盤面データ:\n" + data;
+            });
+        }
+
+        // データを送信する（テスト用）
+        function sendMove() {
+            if (conn && conn.open) {
+                const dummyBoard = "B...W...\n.BW....\n......."; // 適当な盤面データ
+                conn.send(dummyBoard);
+                document.getElementById('game-board').innerText = "送信した盤面データ:\n" + dummyBoard;
+            } else {
+                alert("まだ接続されていません");
+            }
+        }
+    </script>
+</body>
+
+</html>
