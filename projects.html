@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - About Me</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            margin: 0;
+            padding: 10vh 8vw;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #bd93f9;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 1.8rem;
+            background-color: #bd93f9;
+            margin-left: 8px;
+            animation: blink 1s infinite;
+        }
+
+        .status {
+            color: #f1fa8c;
+            font-size: 1.1rem;
+            margin: 15px 0 50px 0;
+        }
+
+        nav {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #6272a4;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #bd93f9;
+        }
+
+        nav a.active {
+            color: #bd93f9;
+            border-bottom: 2px solid #bd93f9;
+        }
+
+        section {
+            border-left: 2px solid #444;
+            padding-left: 20px;
+            margin-bottom: 40px;
+        }
+
+        .project-card {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            transition: border-color 0.3s, transform 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .project-card:hover {
+            border-color: #bd93f9;
+            transform: translateX(10px);
+        }
+
+        .project-title {
+            color: #bd93f9;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .project-desc {
+            color: #f8f8f2;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tag {
+            background-color: #44475a;
+            color: #8be9fd;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Projects<span class="cursor"></span></h1>
+        <div class="status">My Creations / Web Apps</div>
+    </header>
+
+    <nav>
+        <a href="index.html">About</a>
+        <a href="projects.html" class="active">Projects</a>
+    </nav>
+
+    <section>
+        <a href="#" class="project-card">
+            <span class="project-title">P2P Othello</span>
+            <span class="project-desc">A real-time multiplayer Othello game using PeerJS for peer-to-peer connection.
+                Features QR code pairing.</span>
+            <div class="project-tags">
+                <span class="tag">HTML5</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">PeerJS</span>
+            </div>
+        </a>
+
+        <a href="#" class="project-card">
+            <span class="project-title">System Dashboard</span>
+            <span class="project-desc">A minimalist white & gold dashboard with live video stream and system status
+                synchronization.</span>
+            <div class="project-tags">
+                <span class="tag">HTML/CSS</span>
+                <span class="tag">Live Stream</span>
+            </div>
+        </a>
+
+        <!-- Add more projects here -->
+    </section>
+
+</body>
+
+</html>
