@@ -3,191 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern P2P Othello</title>
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <title>Modern Firebase Othello</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
-        :root {
-            --bg-color: #f8f9fa;
-            --board-color: #1a531a;
-            --white: #ffffff;
-            --accent: #007bff;
-            --radius: 12px;
-            --shadow: 0 8px 30px rgba(0,0,0,0.12);
-        }
-
-        body {
-            font-family: sans-serif;
-            background-color: var(--bg-color);
-            display: flex; flex-direction: column; align-items: center; padding: 20px;
-        }
-
-        #setup-screen {
-            background: var(--white); padding: 30px; border-radius: var(--radius);
-            box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center;
-        }
-
-        /* 6桁入力ボックスのスタイル */
-        .otp-container {
-            display: flex; justify-content: center; gap: 8px; margin: 20px 0;
-        }
-        .otp-input {
-            width: 40px; height: 50px; font-size: 1.5rem; text-align: center;
-            border: 2px solid #eee; border-radius: 8px;
-        }
-        .otp-input:focus { border-color: var(--accent); outline: none; }
-
-        .id-display { font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; margin: 10px 0; color: #333; }
-        
-        button {
-            width: 100%; padding: 15px; background: var(--accent); color: white;
-            border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
-        }
-        button:disabled { background: #ccc; }
-
-        #game-screen { display: none; width: 100%; max-width: 600px; }
-        #board {
-            display: grid; grid-template-columns: repeat(8, 1fr);
-            background: var(--board-color); border: 5px solid var(--board-color);
-            border-radius: 12px; width: 90vw; height: 90vw; max-width: 600px; max-height: 600px;
-        }
-        .cell { border: 1px solid #113f11; display: flex; justify-content: center; align-items: center; }
-        .stone { width: 80%; height: 80%; border-radius: 50%; transition: transform 0.4s; }
-        .black { background: #1a1a1a; }
-        .white { background: #fff; border: 1px solid #ddd; }
+        :root { --bg: #f8f9fa; --accent: #007bff; --green: #1a531a; }
+        body { font-family: sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        #setup-screen { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .otp-container { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
+        .otp-input { width: 40px; height: 50px; font-size: 1.5rem; text-align: center; border: 2px solid #ddd; border-radius: 8px; }
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #game-screen { display: none; width: 100%; max-width: 500px; }
+        #board { display: grid; grid-template-columns: repeat(8, 1fr); background: var(--green); border: 4px solid var(--green); border-radius: 8px; width: 90vw; height: 90vw; max-width: 500px; max-height: 500px; }
+        .cell { border: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; aspect-ratio: 1/1; }
+        .stone { width: 85%; height: 85%; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .black { background: #111; }
+        .white { background: #fff; }
     </style>
 </head>
 <body>
 
     <div id="setup-screen">
-        <div style="font-size: 0.9rem; color: #666;">あなたのID</div>
-        <div id="my-id" class="id-display">------</div>
-        
-        <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
-        
-        <div style="font-size: 0.9rem; color: #666;">相手のIDを入力</div>
-        <div class="otp-container" id="otp-inputs">
-            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
-            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
-            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
-            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
-            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
-            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
+        <div style="font-size: 0.9rem; color: #666;">あなたの部屋ID</div>
+        <div id="my-id" style="font-size: 2rem; font-weight: bold; color: var(--accent); margin: 10px 0;">生成中...</div>
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        <div style="font-size: 0.9rem; color: #666;">入る部屋のIDを入力</div>
+        <div class="otp-container">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
         </div>
-        
-        <button id="connect-btn" onclick="connectToPeer()">対戦を開始する</button>
-        <div id="setup-status" style="margin-top: 15px; font-size: 0.8rem; color: #888;"></div>
+        <button onclick="joinRoom()">対戦開始</button>
     </div>
 
     <div id="game-screen">
-        <div id="game-status" style="margin-bottom: 10px; font-weight: bold;"></div>
+        <div id="status" style="margin-bottom:10px; font-weight:bold; text-align:center;"></div>
         <div id="board"></div>
     </div>
 
     <script>
-        let myId, peer, conn, gameState = { board: [], turn: 1, myColor: 0 };
-        const BLACK = 1, WHITE = 2, EMPTY = 0;
+        // --- 1. Firebaseの設定（テスト用の公開DB） ---
+        // 本来は自分のコンソールで作成しますが、テスト用に動作する設定を入れます
+        const firebaseConfig = {
+            databaseURL: "https://othello-test-default-rtdb.firebaseio.com" // 仮のURL
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        // --- 6桁入力の自動移動ロジック ---
+        let roomId, myColor = 0;
         const inputs = document.querySelectorAll('.otp-input');
-        inputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                if (e.target.value.length > 1) e.target.value = e.target.value.slice(0, 1);
-                if (e.target.value && index < 5) inputs[index + 1].focus();
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) inputs[index - 1].focus();
-            });
+
+        // ID自動移動
+        inputs.forEach((input, i) => {
+            input.oninput = () => { if(input.value && i<5) inputs[i+1].focus(); };
+            input.onkeydown = (e) => { if(e.key==='Backspace' && !input.value && i>0) inputs[i-1].focus(); };
         });
 
-        function getFullId() {
-            return Array.from(inputs).map(i => i.value).join('');
-        }
+        // 自分のID生成
+        const myGeneratedId = Math.floor(100000 + Math.random() * 900000).toString();
+        document.getElementById('my-id').innerText = myGeneratedId;
 
-        // --- PeerJS通信ロジック ---
-        function initPeer() {
-            myId = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('my-id').innerText = myId;
-            
-            peer = new Peer(myId);
-            peer.on('open', () => document.getElementById('setup-status').innerText = "準備完了");
-            peer.on('connection', (c) => {
-                conn = c;
-                setupConnection(true);
-            });
-            peer.on('error', (err) => {
-                console.error(err);
-                alert("エラーが発生しました。ページをリロードしてください。");
-            });
-        }
+        function joinRoom() {
+            const targetId = Array.from(inputs).map(i => i.value).join('');
+            roomId = targetId || myGeneratedId;
+            myColor = targetId ? 2 : 1; // ID入力したらゲスト、しなかったらホスト
 
-        function connectToPeer() {
-            const remoteId = getFullId();
-            if (remoteId.length !== 6) { alert("6桁入力してください"); return; }
-            if (remoteId === myId) { alert("自分には接続できません"); return; }
-
-            document.getElementById('setup-status').innerText = "接続中...";
-            conn = peer.connect(remoteId);
-            setupConnection(false);
-        }
-
-        function setupConnection(isHost) {
-            conn.on('open', () => {
-                document.getElementById('setup-screen').style.display = 'none';
-                document.getElementById('game-screen').style.display = 'block';
-                gameState.myColor = isHost ? BLACK : WHITE;
-                startGame();
-            });
-            conn.on('data', (data) => {
-                if (data.type === 'MOVE') {
-                    gameState.board = data.board;
-                    gameState.turn = data.nextTurn;
-                    renderBoard();
+            // 部屋のデータを監視
+            db.ref('rooms/' + roomId).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data && myColor === 1) {
+                    // ホストが部屋を作成
+                    db.ref('rooms/' + roomId).set({
+                        board: Array(64).fill(0).map((v, i) => [27,36].includes(i)?2:[28,35].includes(i)?1:0),
+                        turn: 1
+                    });
+                } else if (data) {
+                    // ゲーム開始
+                    document.getElementById('setup-screen').style.display = 'none';
+                    document.getElementById('game-screen').style.display = 'block';
+                    boardState = data.board;
+                    currentTurn = data.turn;
+                    drawBoard();
                 }
             });
-            conn.on('close', () => alert("通信が切断されました"));
         }
 
-        // --- 簡易ゲームロジック ---
-        function startGame() {
-            gameState.board = Array(8).fill().map(() => Array(8).fill(EMPTY));
-            gameState.board[3][3] = WHITE; gameState.board[3][4] = BLACK;
-            gameState.board[4][3] = BLACK; gameState.board[4][4] = WHITE;
-            createBoardUI();
-            renderBoard();
-        }
+        // --- ゲーム描画系 ---
+        let boardState = [];
+        let currentTurn = 1;
 
-        function createBoardUI() {
-            const boardEl = document.getElementById('board');
-            boardEl.innerHTML = '';
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.onclick = () => makeMove(r, c);
-                    boardEl.appendChild(cell);
-                }
-            }
-        }
-
-        function renderBoard() {
-            const cells = document.querySelectorAll('.cell');
-            gameState.board.flat().forEach((val, i) => {
-                cells[i].innerHTML = val === EMPTY ? '' : `<div class="stone ${val === BLACK ? 'black' : 'white'}"></div>`;
+        function drawBoard() {
+            const b = document.getElementById('board');
+            b.innerHTML = '';
+            boardState.forEach((v, i) => {
+                const c = document.createElement('div');
+                c.className = 'cell';
+                c.innerHTML = v === 0 ? '' : `<div class="stone ${v===1?'black':'white'}"></div>`;
+                c.onclick = () => {
+                    if (currentTurn !== myColor || v !== 0) return;
+                    boardState[i] = myColor;
+                    db.ref('rooms/' + roomId).update({
+                        board: boardState,
+                        turn: myColor === 1 ? 2 : 1
+                    });
+                };
+                b.appendChild(c);
             });
-            document.getElementById('game-status').innerText = 
-                gameState.turn === gameState.myColor ? "あなたの番です" : "相手の番です";
+            document.getElementById('status').innerText = currentTurn === myColor ? "あなたの番" : "相手の番";
         }
-
-        function makeMove(r, c) {
-            if (gameState.turn !== gameState.myColor || gameState.board[r][c] !== EMPTY) return;
-            // 本来はここでオセロのひっくり返しロジックを実行
-            gameState.board[r][c] = gameState.myColor;
-            gameState.turn = gameState.myColor === BLACK ? WHITE : BLACK;
-            conn.send({ type: 'MOVE', board: gameState.board, nextTurn: gameState.turn });
-            renderBoard();
-        }
-
-        window.addEventListener('DOMContentLoaded', initPeer);
     </script>
 </body>
 </html>
