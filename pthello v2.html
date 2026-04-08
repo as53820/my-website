@@ -443,6 +443,11 @@
         function connectToPeer() {
             const remoteId = peerIdInput.value;
             if (!remoteId) return;
+            if (remoteId === myId) {
+    　　　　    　alert("自分自身には接続できません。");
+        　　　　　setupStatusEl.innerText = "";
+        　　　　　return;
+    　　　　　}
             setupStatusEl.innerText = "接続中...";
             connectBtn.disabled = true;
             conn = peer.connect(remoteId);
