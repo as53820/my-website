@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Othello - Responive</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f0f0f0;
+            --board-color: #008000;
+            /* オーソドックスな緑 */
+            --cell-border: #006000;
+            --black-stone: #000;
+            --white-stone: #fff;
+            --highlight-color: rgba(255, 255, 0, 0.5);
+            /* 打てる場所のハイライト */
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        /* タイトル・セッション管理画面 */
+        #setup-screen {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .id-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        input[type="number"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* ゲーム画面 */
+        #game-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #info-panel {
+            width: 100%;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .score {
+            font-size: 1.1rem;
+        }
+
+        .stone-icon {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .black-icon {
+            background-color: var(--black-stone);
+        }
+
+        .white-icon {
+            background-color: var(--white-stone);
+        }
+
+        /* 盤面 (レスポンシブの核心) */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            background-color: var(--board-color);
+            border: 5px solid var(--cell-border);
+            border-radius: 5px;
+            /* スマホ優先: 画面幅いっぱい、最大600px */
+            width: 95vw;
+            height: 95vw;
+            max-width: 600px;
+            max-height: 600px;
+            box-sizing: border-box;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            border: 1px solid var(--cell-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* 打てる場所のハイライト */
+        .cell.valid::after {
+            content: '';
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            background-color: var(--highlight-color);
+            border-radius: 50%;
+        }
+
+        /* 石 */
+        .stone {
+            width: 85%;
+            height: 85%;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-out;
+            /* ひっくり返るアニメーション */
+        }
+
+        .stone.black {
+            background-color: var(--black-stone);
+            transform: scale(1);
+        }
+
+        .stone.white {
+            background-color: var(--white-stone);
+            transform: scale(1);
+        }
+
+        /* ひっくり返る時の仮のアニメーション（実際には配列入れ替え） */
+        .stone.flip {
+            transform: scaleY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>P2P Othello</h1>
+
+    <div id="setup-screen">
+        <p>あなたのID（相手に教えてください）</p>
+        <div class="id-display" id="my-id">---</div>
