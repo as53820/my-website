@@ -1,162 +1,463 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Othello Final</title>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <title>P2P Othello - Responsive</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        :root { --bg: #f8f9fa; --board-bg: #2e7d32; --accent: #007bff; }
-        body { font-family: sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        #setup-screen { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .id-display { font-size: 2.5rem; font-weight: bold; color: var(--accent); margin: 10px 0; letter-spacing: 4px; }
-        .otp-container { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
-        .otp-input { width: 40px; height: 50px; font-size: 1.5rem; text-align: center; border: 2px solid #ddd; border-radius: 8px; outline: none; }
-        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        #game-screen { display: none; width: 100%; max-width: 500px; }
-        #board { display: grid; grid-template-columns: repeat(8, 1fr); background: var(--board-bg); border: 4px solid #1b5e20; border-radius: 8px; width: 90vw; height: 90vw; max-width: 500px; max-height: 500px; }
-        .cell { border: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .stone { width: 85%; height: 85%; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
-        .black { background: #111; }
-        .white { background: #fff; }
-        .hint { width: 30%; height: 30%; background: rgba(255,255,255,0.2); border-radius: 50%; }
-        #info { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; width: 100%; display: flex; justify-content: space-between; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        :root {
+            --bg-color: #f0f0f0;
+            --board-color: #2e7d32;
+            --cell-border: #1b5e20;
+            --black-stone: #000;
+            --white-stone: #fff;
+            --highlight-color: rgba(255, 255, 255, 0.3);
+            --text-color: #333;
+            --accent-color: #007bff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin: 0 0 20px 0;
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        /* セットアップ画面 */
+        #setup-screen {
+            text-align: center;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .id-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 15px 0;
+            letter-spacing: 2px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: transform 0.1s, background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* ゲーム画面 */
+        #game-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #info-panel {
+            width: 100%;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .status {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stone-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+        }
+
+        .black-icon {
+            background-color: var(--black-stone);
+        }
+
+        .white-icon {
+            background-color: var(--white-stone);
+        }
+
+        /* 盤面 */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            background-color: var(--board-color);
+            border: 6px solid var(--cell-border);
+            border-radius: 8px;
+            width: 90vw;
+            height: 90vw;
+            max-width: 500px;
+            max-height: 500px;
+            box-sizing: border-box;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cell.valid::after {
+            content: '';
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background-color: var(--highlight-color);
+            border-radius: 50%;
+        }
+
+        .stone {
+            width: 85%;
+            height: 85%;
+            border-radius: 50%;
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.4s;
+        }
+
+        .stone.black {
+            background-color: var(--black-stone);
+        }
+
+        .stone.white {
+            background-color: var(--white-stone);
+        }
+
+        .stone.flipping {
+            transform: rotateY(180deg) scale(1.1);
+        }
+
+        #reset-btn {
+            background-color: #6c757d;
+            margin-top: 20px;
+            width: auto;
+            padding: 10px 30px;
+        }
     </style>
 </head>
+
 <body>
+    <h1>P2P Othello</h1>
 
-<div id="setup-screen">
-    <div style="font-size: 0.9rem; color: #666;">あなたの部屋ID</div>
-    <div id="my-id-text" class="id-display">------</div>
-    <div class="otp-container">
-        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
-        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
-        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
-        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
-        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
-        <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+    <div id="setup-screen">
+        <p>あなたのID（相手に教えてください）</p>
+        <div class="id-display" id="my-id">読み込み中...</div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <p>相手のIDを入力して対戦開始</p>
+        <input type="number" id="peer-id" placeholder="6桁のIDを入力">
+        <button id="connect-btn">接続して対戦</button>
+        <p id="setup-status" style="margin-top: 15px; font-size: 0.9rem; color: #666;"></p>
     </div>
-    <button id="join-btn" onclick="joinRoom()">対戦を開始する</button>
-    <div id="status-msg" style="margin-top:15px; font-size:0.8rem; color:#dc3545;"></div>
-</div>
 
-<div id="game-screen">
-    <div id="info">
-        <div id="turn-text">読込中...</div>
-        <div id="score-text">黒 2 - 2 白</div>
+    <div id="game-screen">
+        <div id="info-panel">
+            <div class="score">
+                <div><span class="stone-icon black-icon"></span> <span id="black-score">2</span></div>
+                <div><span class="stone-icon white-icon"></span> <span id="white-score">2</span></div>
+            </div>
+            <div id="status-text" class="status">接続中...</div>
+        </div>
+        <div id="board"></div>
+        <button id="reset-btn" style="display: none;">再戦する</button>
     </div>
-    <div id="board"></div>
-</div>
 
-<script>
-// Firebase 構成
-const config = {
-    apiKey: "AIzaSyDIM-ycgMAJpIZXXC0UpeeG-PXPM0ds54w",
-    authDomain: "osello-b18cb.firebaseapp.com",
-    databaseURL: "https://osello-b18cb-default-rtdb.firebaseio.com",
-    projectId: "osello-b18cb",
-    appId: "1:521420510635:web:236a09645635d99d00aeee"
-};
-firebase.initializeApp(config);
-const db = firebase.database();
+    <script>
+        // --- ゲーム定数と状態 ---
+        const EMPTY = 0, BLACK = 1, WHITE = 2;
+        let board = Array(8).fill().map(() => Array(8).fill(EMPTY));
+        let myColor = null; // 1: Black (Host), 2: White (Guest)
+        let turn = BLACK;
+        let peer, conn;
 
-let roomId, myColor = 0; // 1:黒, 2:白
-const inputs = document.querySelectorAll('.otp-input');
-const joinBtn = document.getElementById('join-btn');
-const statusMsg = document.getElementById('status-msg');
+        // --- PeerJS セットアップ ---
+        const myGeneratedId = Math.floor(100000 + Math.random() * 900000).toString();
+        peer = new Peer(myGeneratedId);
 
-const myGenId = Math.floor(100000 + Math.random() * 900000).toString();
-document.getElementById('my-id-text').innerText = myGenId;
+        peer.on('open', (id) => {
+            document.getElementById('my-id').innerText = id;
+            updateSetupStatus("相手の接続を待機しています...");
+        });
 
-inputs.forEach((input, i) => {
-    input.oninput = () => { if(input.value && i<5) inputs[i+1].focus(); };
-    input.onkeydown = (e) => { if(e.key==='Backspace' && !input.value && i>0) inputs[i-1].focus(); };
-});
+        // ホストとして接続を受ける
+        peer.on('connection', (c) => {
+            if (conn) { c.close(); return; }
+            conn = c;
+            myColor = BLACK;
+            setupConnection();
+        });
 
-function joinRoom() {
-    const inputId = Array.from(inputs).map(i => i.value).join('');
-    roomId = inputId || myGenId;
-    myColor = inputId ? 2 : 1; 
+        // ゲストとして接続する
+        document.getElementById('connect-btn').addEventListener('click', () => {
+            const remoteId = document.getElementById('peer-id').value;
+            if (!remoteId || remoteId.length !== 6) {
+                alert("6桁の有効なIDを入力してください");
+                return;
+            }
+            updateSetupStatus("接続を試行しています...");
+            conn = peer.connect(remoteId);
+            myColor = WHITE;
+            setupConnection();
+        });
 
-    joinBtn.disabled = true;
-    joinBtn.innerText = "接続中...";
+        function setupConnection() {
+            conn.on('open', () => {
+                startGame();
+            });
 
-    const ref = db.ref('rooms/' + roomId);
-    ref.on('value', (s) => {
-        const data = s.val();
-        if (!data && myColor === 1) {
-            const board = Array(64).fill(0);
-            board[27]=2; board[28]=1; board[35]=1; board[36]=2;
-            ref.set({ board, turn: 1 });
-        } else if (data) {
+            conn.on('data', (data) => {
+                if (data.type === 'move') {
+                    handleRemoteMove(data.r, data.c, data.color);
+                } else if (data.type === 'reset') {
+                    initBoard();
+                    updateUI();
+                }
+            });
+
+            conn.on('close', () => {
+                alert("対戦相手との接続が切れました。");
+                location.reload();
+            });
+
+            conn.on('error', (err) => {
+                console.error(err);
+                alert("接続エラーが発生しました。");
+                location.reload();
+            });
+        }
+
+        function updateSetupStatus(msg) {
+            document.getElementById('setup-status').innerText = msg;
+        }
+
+        // --- ゲームエンジン ---
+        function startGame() {
             document.getElementById('setup-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            render(data.board, data.turn);
+            document.getElementById('game-screen').style.display = 'flex';
+            initBoard();
+            updateUI();
         }
-    }, (err) => {
-        statusMsg.innerText = "接続エラー: " + err.message;
-        joinBtn.disabled = false;
-        joinBtn.innerText = "再試行";
-    });
-}
 
-function getFlips(board, idx, color) {
-    if (board[idx] !== 0) return [];
-    const opponent = 3 - color;
-    const dirs = [-9,-8,-7,-1,1,7,8,9];
-    let allFlips = [];
-    dirs.forEach(d => {
-        let temp = [], cur = idx + d;
-        while(cur >= 0 && cur < 64) {
-            if (Math.abs((cur-d)%8 - cur%8) > 1) break;
-            if (board[cur] === opponent) temp.push(cur);
-            else if (board[cur] === color) { allFlips.push(...temp); break; }
-            else break;
-            cur += d;
+        function initBoard() {
+            board = Array(8).fill().map(() => Array(8).fill(EMPTY));
+            board[3][3] = WHITE;
+            board[4][4] = WHITE;
+            board[3][4] = BLACK;
+            board[4][3] = BLACK;
+            turn = BLACK;
+            document.getElementById('reset-btn').style.display = 'none';
         }
-    });
-    return allFlips;
-}
 
-function render(board, turn) {
-    const bEl = document.getElementById('board');
-    bEl.innerHTML = '';
-    let b=0, w=0;
-    board.forEach((v, i) => {
-        if(v===1) b++; if(v===2) w++;
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        if (v !== 0) {
-            const stone = document.createElement('div');
-            stone.className = `stone ${v===1?'black':'white'}`;
-            cell.appendChild(stone);
-        } else if (turn === myColor) {
-            const flips = getFlips(board, i, myColor);
-            if (flips.length > 0) {
-                const hint = document.createElement('div');
-                hint.className = 'hint';
-                cell.appendChild(hint);
-                cell.onclick = () => {
-                    const newBoard = [...board];
-                    newBoard[i] = myColor;
-                    flips.forEach(f => newBoard[f] = myColor);
-                    let nextTurn = 3 - myColor;
-                    const canOpponentMove = newBoard.some((_, idx) => getFlips(newBoard, idx, nextTurn).length > 0);
-                    if (!canOpponentMove) nextTurn = myColor; 
-                    db.ref('rooms/' + roomId).update({ board: newBoard, turn: nextTurn });
-                };
+        function updateUI() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+
+            let bCount = 0, wCount = 0;
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+
+                    if (board[r][c] !== EMPTY) {
+                        const stone = document.createElement('div');
+                        stone.className = `stone ${board[r][c] === BLACK ? 'black' : 'white'}`;
+                        cell.appendChild(stone);
+                        if (board[r][c] === BLACK) bCount++; else wCount++;
+                    } else if (turn === myColor && canPlace(r, c, myColor)) {
+                        cell.classList.add('valid');
+                        cell.addEventListener('click', () => handleLocalMove(r, c));
+                    }
+                    boardEl.appendChild(cell);
+                }
+            }
+
+            document.getElementById('black-score').innerText = bCount;
+            document.getElementById('white-score').innerText = wCount;
+
+            const statusEl = document.getElementById('status-text');
+            if (turn === myColor) {
+                statusEl.innerText = "あなたの番です (" + (myColor === BLACK ? "黒" : "白") + ")";
+                statusEl.style.color = varToHex('--accent-color');
+            } else {
+                statusEl.innerText = "相手の番です... (" + (turn === BLACK ? "黒" : "白") + ")";
+                statusEl.style.color = "#555";
+            }
+
+            if (isGameOver()) {
+                let msg = "試合終了！ ";
+                if (bCount > wCount) msg += "黒の勝利！";
+                else if (wCount > bCount) msg += "白の勝利！";
+                else msg += "引き分け！";
+                statusEl.innerText = msg;
+                statusEl.style.color = "#d63031";
+                document.getElementById('reset-btn').style.display = 'inline-block';
             }
         }
-        bEl.appendChild(cell);
-    });
-    document.getElementById('score-text').innerText = `黒 ${b} - ${w} 白`;
-    document.getElementById('turn-text').innerText = (turn === myColor) ? "あなたの番" : "相手の番";
-    if (!board.some((v, i) => v === 0 || getFlips(board, i, 1).length > 0 || getFlips(board, i, 2).length > 0)) {
-        document.getElementById('turn-text').innerText = "対戦終了！";
-    }
-}
-</script>
+
+        function varToHex(varName) {
+            return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        }
+
+        function handleLocalMove(r, c) {
+            if (turn !== myColor) return;
+            const flipped = getFlippedPositions(r, c, myColor);
+            if (flipped.length === 0) return;
+
+            applyMove(r, c, myColor, flipped);
+            conn.send({ type: 'move', r, c, color: myColor });
+
+            toggleTurn();
+        }
+
+        function handleRemoteMove(r, c, color) {
+            const flipped = getFlippedPositions(r, c, color);
+            applyMove(r, c, color, flipped);
+            toggleTurn();
+        }
+
+        function applyMove(r, c, color, flipped) {
+            board[r][c] = color;
+            flipped.forEach(pos => {
+                board[pos.r][pos.c] = color;
+            });
+            updateUI();
+
+            // アニメーション効果（簡易的に石にクラスをつけるならさらに工夫が必要）
+        }
+
+        function toggleTurn() {
+            turn = (turn === BLACK) ? WHITE : BLACK;
+            if (!canAnyMove(turn)) {
+                if (!canAnyMove(turn === BLACK ? WHITE : BLACK)) {
+                    // 両者打てない = 終了
+                } else {
+                    alert((turn === BLACK ? "黒" : "白") + "がパスされました。");
+                    turn = (turn === BLACK ? WHITE : BLACK);
+                }
+            }
+            updateUI();
+        }
+
+        function canPlace(r, c, color) {
+            return board[r][c] === EMPTY && getFlippedPositions(r, c, color).length > 0;
+        }
+
+        function getFlippedPositions(r, c, color) {
+            const opponent = (color === BLACK) ? WHITE : BLACK;
+            const directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+            let flipped = [];
+
+            directions.forEach(([dr, dc]) => {
+                let path = [];
+                let currR = r + dr, currC = c + dc;
+                while (currR >= 0 && currR < 8 && currC >= 0 && currC < 8 && board[currR][currC] === opponent) {
+                    path.push({ r: currR, c: currC });
+                    currR += dr; currC += dc;
+                }
+                if (currR >= 0 && currR < 8 && currC >= 0 && currC < 8 && board[currR][currC] === color) {
+                    flipped = flipped.concat(path);
+                }
+            });
+            return flipped;
+        }
+
+        function canAnyMove(color) {
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (canPlace(r, c, color)) return true;
+                }
+            }
+            return false;
+        }
+
+        function isGameOver() {
+            return !canAnyMove(BLACK) && !canAnyMove(WHITE);
+        }
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            initBoard();
+            conn.send({ type: 'reset' });
+            updateUI();
+        });
+    </script>
 </body>
+
 </html>
