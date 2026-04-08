@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase Othello</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f0f2f5; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        button { width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        #status { margin-top: 15px; font-size: 0.9rem; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Firebase Othello</h2>
+        <p>あなたの部屋ID: <strong id="my-id" style="color:#007bff; font-size:1.5rem;">------</strong></p>
+        <input type="number" id="input-id" placeholder="相手のIDを入力" style="width:90%; padding:10px; margin-bottom:15px; text-align:center; font-size:1.2rem;">
+        <button id="btn" onclick="connect()">対戦を開始する</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // あなたの Firebase 設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIM-ycgMAJpIZXXC0UpeeG-PXPM0ds54w",
+            authDomain: "osello-b18cb.firebaseapp.com",
+            databaseURL: "https://osello-b18cb-default-rtdb.firebaseio.com",
+            projectId: "osello-b18cb",
+            storageBucket: "osello-b18cb.firebasestorage.app",
+            messagingSenderId: "521420510635",
+            appId: "1:521420510635:web:236a09645635d99d00aeee"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // 部屋ID生成
+        const myId = Math.floor(100000 + Math.random() * 900000).toString();
+        document.getElementById('my-id').innerText = myId;
+
+        function connect() {
+            const inputId = document.getElementById('input-id').value;
+            const roomId = inputId || myId;
+            const btn = document.getElementById('btn');
+            const status = document.getElementById('status');
+
+            // グレーアウト
+            btn.disabled = true;
+            btn.innerText = "接続中...";
+            status.innerText = "Firebaseサーバーにアクセス中...";
+
+            // 接続とデータ作成の同時テスト
+            const ref = db.ref('rooms/' + roomId);
+            ref.update({
+                lastConnected: Date.now()
+            }).then(() => {
+                status.style.color = "green";
+                status.innerText = "✅ 接続成功！対戦画面へ移行します。";
+                // ここで実際のオセロ画面へ
+                alert("接続に成功しました！これでゲームが始められます。");
+            }).catch((e) => {
+                status.style.color = "red";
+                status.innerText = "❌ エラー: " + e.message;
+                console.error(e);
+                btn.disabled = false;
+                btn.innerText = "再試行";
+            });
+        }
+    </script>
+</body>
+</html>
