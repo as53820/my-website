@@ -3,30 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Othello Full</title>
+    <title>Othello v0.1.8</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         :root { --bg: #f0f2f5; --green: #2e7d32; --accent: #007bff; }
         body { font-family: sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        
-        /* 接続画面 */
         #setup-screen { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
         .id-display { font-size: 2.5rem; font-weight: bold; color: var(--accent); margin: 10px 0; letter-spacing: 4px; }
         .otp-container { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
-        .otp-input { width: 40px; height: 50px; font-size: 1.5rem; text-align: center; border: 2px solid #ddd; border-radius: 8px; outline: none; transition: border-color 0.2s; }
-        .otp-input:focus { border-color: var(--accent); }
-        
+        .otp-input { width: 40px; height: 50px; font-size: 1.5rem; text-align: center; border: 2px solid #ddd; border-radius: 8px; outline: none; }
         button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         button:disabled { background: #ccc; cursor: not-allowed; }
-
-        /* ゲーム画面 */
         #game-screen { display: none; width: 100%; max-width: 500px; }
         #info-panel { background: white; padding: 10px 20px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         #board { display: grid; grid-template-columns: repeat(8, 1fr); background: var(--green); border: 4px solid #1b5e20; border-radius: 8px; width: 90vw; height: 90vw; max-width: 500px; max-height: 500px; }
         .cell { border: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; position: relative; cursor: pointer; }
         .stone { width: 85%; height: 85%; border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.4); transition: transform 0.4s; }
-        .black { background: #111; transform: rotateY(0deg); }
+        .black { background: #111; }
         .white { background: #fff; transform: rotateY(180deg); }
         .hint { width: 30%; height: 30%; background: rgba(255,255,255,0.2); border-radius: 50%; }
     </style>
@@ -67,15 +61,16 @@
             messagingSenderId: "521420510635",
             appId: "1:521420510635:web:236a09645635d99d00aeee"
         };
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let roomId, myColor = 0; // 1:BLACK, 2:WHITE
+        let roomId, myColor = 0;
         const inputs = document.querySelectorAll('.otp-input');
         const joinBtn = document.getElementById('join-btn');
         const statusMsg = document.getElementById('status-msg');
 
-        // ID自動フォーカス
+        // 自動フォーカス
         inputs.forEach((input, i) => {
             input.oninput = () => { if(input.value && i<5) inputs[i+1].focus(); };
             input.onkeydown = (e) => { if(e.key==='Backspace' && !input.value && i>0) inputs[i-1].focus(); };
@@ -87,18 +82,26 @@
         function joinRoom() {
             const inputId = Array.from(inputs).map(i => i.value).join('');
             roomId = inputId || myGeneratedId;
-            myColor = inputId ? 2 : 1; // ID入力があれば後攻（白）
+            myColor = inputId ? 2 : 1; 
 
-            // 接続中表示
             joinBtn.disabled = true;
             joinBtn.innerText = "接続中...";
-            statusMsg.innerText = "サーバーに接続しています...";
+            statusMsg.innerText = "Firebaseに接続しています...";
 
             const ref = db.ref('rooms/' + roomId);
+            
+            // 接続エラー監視
+            const timeout = setTimeout(() => {
+                if (joinBtn.innerText === "接続中...") {
+                    statusMsg.innerText = "接続が遅いようです。ルール公開を確認してください。";
+                    statusMsg.style.color = "red";
+                }
+            }, 5000);
+
             ref.on('value', (s) => {
+                clearTimeout(timeout);
                 const data = s.val();
                 if (!data && myColor === 1) {
-                    // 初期盤面作成
                     const board = Array(64).fill(0);
                     board[27]=2; board[28]=1; board[35]=1; board[36]=2;
                     ref.set({ board, turn: 1 });
@@ -107,6 +110,9 @@
                     document.getElementById('game-screen').style.display = 'block';
                     render(data.board, data.turn);
                 }
+            }, (err) => {
+                statusMsg.innerText = "アクセス拒否: " + err.message;
+                statusMsg.style.color = "red";
             });
         }
 
@@ -151,7 +157,6 @@
                             newBoard[i] = myColor;
                             flips.forEach(f => newBoard[f] = myColor);
                             let nextTurn = 3 - myColor;
-                            // パス判定
                             const hasMove = newBoard.some((_, idx) => getFlips(newBoard, idx, nextTurn).length > 0);
                             if (!hasMove) nextTurn = myColor; 
                             db.ref('rooms/' + roomId).update({ board: newBoard, turn: nextTurn });
