@@ -7,469 +7,187 @@
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         :root {
-            /* モダンな配色 */
-            --bg-color: #f8f9fa;       /* 薄いグレー */
-            --board-color: #1a531a;    /* 落ち着いた緑 */
-            --cell-border: #113f11;
-            --black-stone: #1a1a1a;
-            --white-stone: #ffffff;
-            --highlight-color: rgba(255, 255, 0, 0.4); /* 打てる場所 */
-            --text-main: #333;
-            --text-sub: #666;
-            --accent-color: #007bff; /* 青（ボタン等） */
-            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-            --shadow-md: 0 8px 30px rgba(0,0,0,0.12);
-            --radius-sm: 8px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
+            --bg-color: #f8f9fa;
+            --board-color: #1a531a;
+            --white: #ffffff;
+            --accent: #007bff;
+            --radius: 12px;
+            --shadow: 0 8px 30px rgba(0,0,0,0.12);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
         }
 
-        h1 { margin-bottom: 20px; font-size: 1.8rem; font-weight: 700; }
-
-        /* タイトル・セットアップ画面 */
         #setup-screen {
-            background: #fff;
-            padding: 30px;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-md);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            box-sizing: border-box;
+            background: var(--white); padding: 30px; border-radius: var(--radius);
+            box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center;
         }
 
-        .id-label { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 5px; }
-        .id-display { font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px; letter-spacing: 2px; }
+        /* 6桁入力ボックスのスタイル */
+        .otp-container {
+            display: flex; justify-content: center; gap: 8px; margin: 20px 0;
+        }
+        .otp-input {
+            width: 40px; height: 50px; font-size: 1.5rem; text-align: center;
+            border: 2px solid #eee; border-radius: 8px;
+        }
+        .otp-input:focus { border-color: var(--accent); outline: none; }
+
+        .id-display { font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; margin: 10px 0; color: #333; }
         
-        input[type="number"] {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 15px 0;
-            border: 2px solid #eee;
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-        input[type="number"]:focus {
-            border-color: var(--accent-color);
-            outline: none;
-        }
-
         button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: background 0.2s, transform 0.1s;
+            width: 100%; padding: 15px; background: var(--accent); color: white;
+            border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer;
         }
-        button:hover { background-color: #0056b3; }
-        button:active { transform: scale(0.98); }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        button:disabled { background: #ccc; }
 
-        /* ゲーム画面 */
-        #game-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        #info-panel {
-            width: 100%;
-            background: #fff;
-            padding: 15px 20px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-
-        .score-box { display: flex; align-items: center; gap: 15px; }
-        .score { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
-        .stone-icon { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 2px rgba(0,0,0,0.2); }
-        .black-icon { background-color: var(--black-stone); }
-        .white-icon { background-color: var(--white-stone); border: 1px solid #ddd; }
-
-        .status-box { text-align: right; }
-        .status { font-weight: 600; color: var(--text-main); }
-        #session-timer { color: var(--text-sub); font-size: 0.8rem; margin-top: 2px; }
-
-        /* 盤面 (レスポンシブ・モダン) */
+        #game-screen { display: none; width: 100%; max-width: 600px; }
         #board {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            background-color: var(--board-color);
-            border: 8px solid var(--board-color); /* 枠も緑に */
-            border-radius: var(--radius-md); /* 盤面の角丸 */
-            width: 95vw;
-            height: 95vw;
-            max-width: 600px;
-            max-height: 600px;
-            box-sizing: border-box;
-            box-shadow: var(--shadow-md);
-            overflow: hidden; /* セルの角丸をはみ出させない */
+            display: grid; grid-template-columns: repeat(8, 1fr);
+            background: var(--board-color); border: 5px solid var(--board-color);
+            border-radius: 12px; width: 90vw; height: 90vw; max-width: 600px; max-height: 600px;
         }
-
-        .cell {
-            border: 1px solid var(--cell-border);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            position: relative;
-            transition: background-color 0.2s;
-        }
-        .cell:hover { background-color: rgba(255,255,255,0.05); }
-
-        /* 打てる場所のハイライト (丸) */
-        .cell.valid::after {
-            content: '';
-            position: absolute;
-            width: 35%;
-            height: 35%;
-            background-color: var(--highlight-color);
-            border-radius: 50%;
-            transition: transform 0.2s;
-        }
-        .cell.valid:hover::after { transform: scale(1.2); }
-
-        /* 石 (アニメーション・角丸) */
-        .stone {
-            width: 85%;
-            height: 85%;
-            border-radius: 50%; /* 石は完全な丸 */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* 柔らかい影 */
-            transition: transform 0.5s ease-out; /* ひっくり返るアニメーション */
-            backface-visibility: hidden; /* 裏面を隠す */
-        }
-        
-        .stone.black {
-            background-color: var(--black-stone);
-            transform: rotateY(0deg);
-        }
-        .stone.white {
-            background-color: var(--white-stone);
-            border: 1px solid #ddd;
-            transform: rotateY(180deg); /* 初期状態で裏返しておく */
-        }
-
-        /* ひっくり返るアニメーション用クラス */
-        .stone.flip-to-white { transform: rotateY(180deg); }
-        .stone.flip-to-black { transform: rotateY(0deg); }
-
+        .cell { border: 1px solid #113f11; display: flex; justify-content: center; align-items: center; }
+        .stone { width: 80%; height: 80%; border-radius: 50%; transition: transform 0.4s; }
+        .black { background: #1a1a1a; }
+        .white { background: #fff; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
-    <h1>Modern P2P Othello</h1>
 
     <div id="setup-screen">
-        <div class="id-label">あなたのID</div>
-        <div class="id-display" id="my-id">------</div>
-        <div class="id-label">相手に教えてください</div>
+        <div style="font-size: 0.9rem; color: #666;">あなたのID</div>
+        <div id="my-id" class="id-display">------</div>
         
-        <div style="margin: 25px 0; border-top: 1px solid #eee;"></div>
+        <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
         
-        <div class="id-label">相手のIDを入力</div>
-        <input type="number" id="peer-id" placeholder="6桁の数字">
+        <div style="font-size: 0.9rem; color: #666;">相手のIDを入力</div>
+        <div class="otp-container" id="otp-inputs">
+            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
+            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
+            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
+            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
+            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
+            <input type="number" class="otp-input" maxlength="1" pattern="\d*">
+        </div>
+        
         <button id="connect-btn" onclick="connectToPeer()">対戦を開始する</button>
-        <div id="setup-status" style="margin-top:15px; color: var(--text-sub); font-size: 0.9rem;">PeerJSを初期化中...</div>
+        <div id="setup-status" style="margin-top: 15px; font-size: 0.8rem; color: #888;"></div>
     </div>
 
     <div id="game-screen">
-        <div id="info-panel">
-            <div class="score-box">
-                <div class="score"><span class="stone-icon black-icon"></span><span id="black-score">2</span></div>
-                <div class="score"><span class="stone-icon white-icon"></span><span id="white-score">2</span></div>
-            </div>
-            <div class="status-box">
-                <div class="status" id="game-status">対戦開始！</div>
-                <div id="session-timer">30:00</div>
-            </div>
-        </div>
-        
+        <div id="game-status" style="margin-bottom: 10px; font-weight: bold;"></div>
         <div id="board"></div>
     </div>
 
     <script>
-        // --- 定数・変数定義 ---
-        const BLACK = 1;
-        const WHITE = 2;
-        const EMPTY = 0;
-        const CELL_SIZE = 8;
+        let myId, peer, conn, gameState = { board: [], turn: 1, myColor: 0 };
+        const BLACK = 1, WHITE = 2, EMPTY = 0;
 
-        let gameState = {
-            board: [], turn: BLACK, myColor: EMPTY, isGameOver: false,
-            blackScore: 2, whiteScore: 2
-        };
-
-        let conn; let peer; let sessionTimeout;
-
-        // --- UI初期化 ---
-        const setupScreen = document.getElementById('setup-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const boardEl = document.getElementById('board');
-        const myIdEl = document.getElementById('my-id');
-        const peerIdInput = document.getElementById('peer-id');
-        const connectBtn = document.getElementById('connect-btn');
-        const setupStatusEl = document.getElementById('setup-status');
-        const gameStatusEl = document.getElementById('game-status');
-        const blackScoreEl = document.getElementById('black-score');
-        const whiteScoreEl = document.getElementById('white-score');
-        const timerEl = document.getElementById('session-timer');
-
-        // 8x8の盤面UIを生成
-        function createBoardUI() {
-            boardEl.innerHTML = '';
-            for (let r = 0; r < CELL_SIZE; r++) {
-                for (let c = 0; c < CELL_SIZE; c++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.row = r; cell.dataset.col = c;
-                    cell.onclick = () => handleCellClick(r, c);
-                    boardEl.appendChild(cell);
-                }
-            }
-        }
-
-        // 盤面UIを更新（アニメーション対応）
-        function updateBoardUI() {
-            const cells = boardEl.querySelectorAll('.cell');
-            cells.forEach(cell => {
-                const r = parseInt(cell.dataset.row);
-                const c = parseInt(cell.dataset.col);
-                const stoneType = gameState.board[r][c];
-
-                let stone = cell.querySelector('.stone');
-                
-                // 石がない場合、新しく作成
-                if (stoneType !== EMPTY && !stone) {
-                    stone = document.createElement('div');
-                    // 初期状態のクラス設定
-                    stone.className = `stone ${stoneType === BLACK ? 'black' : 'white'}`;
-                    cell.appendChild(stone);
-                }
-
-                // 石がある場合、色を確認してひっくり返すアニメーション
-                if (stoneType !== EMPTY && stone) {
-                    if (stoneType === BLACK && stone.classList.contains('white')) {
-                        // 白から黒へ
-                        stone.classList.remove('white');
-                        stone.classList.add('black', 'flip-to-black');
-                    } else if (stoneType === WHITE && stone.classList.contains('black')) {
-                        // 黒から白へ
-                        stone.classList.remove('black');
-                        stone.classList.add('white', 'flip-to-white');
-                    }
-                }
-
-                // 打てる場所のハイライト
-                cell.classList.remove('valid');
-                if (!gameState.isGameOver && gameState.turn === gameState.myColor && stoneType === EMPTY) {
-                    if (findFlips(r, c, gameState.turn, gameState.board).length > 0) {
-                        cell.classList.add('valid');
-                    }
-                }
+        // --- 6桁入力の自動移動ロジック ---
+        const inputs = document.querySelectorAll('.otp-input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length > 1) e.target.value = e.target.value.slice(0, 1);
+                if (e.target.value && index < 5) inputs[index + 1].focus();
             });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) inputs[index - 1].focus();
+            });
+        });
 
-            // スコアとターンの表示更新
-            blackScoreEl.innerText = gameState.blackScore;
-            whiteScoreEl.innerText = gameState.whiteScore;
-
-            if (gameState.isGameOver) {
-                let winner = "引き分け";
-                if (gameState.blackScore > gameState.whiteScore) winner = "黒の勝ち！";
-                else if (gameState.whiteScore > gameState.blackScore) winner = "白の勝ち！";
-                gameStatusEl.innerText = `終局。${winner}`;
-            } else {
-                gameStatusEl.innerText = gameState.turn === gameState.myColor ? "あなたの番" : "相手の番";
-            }
+        function getFullId() {
+            return Array.from(inputs).map(i => i.value).join('');
         }
 
-        // --- オセロロジック (前回と同じ) ---
-        function initBoard() {
-            gameState.board = Array(CELL_SIZE).fill().map(() => Array(CELL_SIZE).fill(EMPTY));
-            gameState.board[3][3] = WHITE; gameState.board[3][4] = BLACK;
-            gameState.board[4][3] = BLACK; gameState.board[4][4] = WHITE;
-            gameState.turn = BLACK; gameState.isGameOver = false;
-            calculateScore();
-        }
-
-        function calculateScore() {
-            let b = 0, w = 0;
-            for (let r = 0; r < CELL_SIZE; r++) {
-                for (let c = 0; c < CELL_SIZE; c++) {
-                    if (gameState.board[r][c] === BLACK) b++;
-                    if (gameState.board[r][c] === WHITE) w++;
-                }
-            }
-            gameState.blackScore = b; gameState.whiteScore = w;
-        }
-
-        function findFlips(r, c, color, board) {
-            if (board[r][c] !== EMPTY) return [];
-            const opponent = color === BLACK ? WHITE : BLACK;
-            const directions = [[-1,-1], [-1,0], [-1,1], [0,-1], [0,1], [1,-1], [1,0], [1,1]];
-            let flips = [];
-            for (let [dr, dc] of directions) {
-                let currentR = r + dr; let currentC = c + dc; let cellsInDir = [];
-                while (currentR >= 0 && currentR < CELL_SIZE && currentC >= 0 && currentC < CELL_SIZE) {
-                    if (board[currentR][currentC] === opponent) { cellsInDir.push([currentR, currentC]); }
-                    else if (board[currentR][currentC] === color) { if (cellsInDir.length > 0) { flips = flips.concat(cellsInDir); } break; }
-                    else { break; }
-                    currentR += dr; currentC += dc;
-                }
-            }
-            return flips;
-        }
-
-        function canMove(color, board) {
-            for (let r = 0; r < CELL_SIZE; r++) { for (let c = 0; c < CELL_SIZE; c++) {
-                if (findFlips(r, c, color, board).length > 0) return true;
-            } }
-            return false;
-        }
-
-        // --- ゲーム進行・通信 ---
-        function handleCellClick(r, c) {
-            if (gameState.isGameOver || gameState.turn !== gameState.myColor || gameState.board[r][c] !== EMPTY) return;
-            const flips = findFlips(r, c, gameState.turn, gameState.board);
-            if (flips.length === 0) return;
-            gameState.board[r][c] = gameState.turn;
-            flips.forEach(([fr, fc]) => { gameState.board[fr][fc] = gameState.turn; });
-            const moveData = { type: 'MOVE', row: r, col: c, flips: flips };
-            if (conn && conn.open) conn.send(moveData);
-            nextTurn();
-        }
-
-        function nextTurn() {
-            calculateScore();
-            const nextColor = gameState.turn === BLACK ? WHITE : BLACK;
-            if (canMove(nextColor, gameState.board)) { gameState.turn = nextColor; }
-            else if (canMove(gameState.turn, gameState.board)) {
-                gameState.turn = gameState.turn;
-                gameStatusEl.innerText = `${nextColor === BLACK ? '黒' : '白'}はパスです`;
-                setTimeout(() => updateBoardUI(), 1500);
-            } else { gameState.isGameOver = true; }
-            updateBoardUI();
-        }
-
-        function handleDataReceive(data) {
-            if (data.type === 'MOVE') {
-                gameState.board[data.row][data.col] = gameState.turn;
-                data.flips.forEach(([fr, fc]) => { gameState.board[fr][fc] = gameState.turn; });
-                nextTurn();
-            }
-        }
-
-        // --- PeerJS / セッション管理 ---
-        function startSessionTimer() {
-            let timeLeft = 30 * 60;
-            function updateTimerDisplay() {
-                const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60;
-                timerEl.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-            if (sessionTimeout) clearInterval(sessionTimeout);
-            updateTimerDisplay();
-            sessionTimeout = setInterval(() => {
-                timeLeft--; updateTimerDisplay();
-                if (timeLeft <= 0) { clearInterval(sessionTimeout); endSession("セッション（30分）が終了しました"); }
-            }, 1000);
-        }
-
-        function endSession(reason) {
-            if (conn) conn.close(); if (sessionTimeout) clearInterval(sessionTimeout);
-            alert(reason); location.reload();
-        }
-
-        // --- PeerJS 初期化 (ID表示対策込み) ---
+        // --- PeerJS通信ロジック ---
         function initPeer() {
-            // 1. まずIDを生成して表示 (これが重要)
-            const myId = Math.floor(100000 + Math.random() * 900000).toString();
-            myIdEl.innerText = myId;
-            console.log("Generated ID:", myId);
-
-            try {
-                // 2. Peerオブジェクト作成
-                peer = new Peer(myId);
-
-                peer.on('open', (id) => {
-                    console.log('PeerJS server connected. My ID is: ' + id);
-                    setupStatusEl.innerText = "接続待機中...";
-                });
-
-                peer.on('error', (err) => {
-                    console.error("PeerJS Error:", err);
-                    setupStatusEl.innerText = "エラー: " + err.type;
-                    connectBtn.disabled = false;
-                });
-
-                // 相手からの接続待ち
-                peer.on('connection', (c) => {
-                    if (conn) { c.close(); return; }
-                    conn = c;
-                    setupConnection(true);
-                });
-
-            } catch (e) {
-                console.error("PeerJS Init Failed:", e);
-                setupStatusEl.innerText = "PeerJSの初期化に失敗しました。";
-            }
+            myId = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('my-id').innerText = myId;
+            
+            peer = new Peer(myId);
+            peer.on('open', () => document.getElementById('setup-status').innerText = "準備完了");
+            peer.on('connection', (c) => {
+                conn = c;
+                setupConnection(true);
+            });
+            peer.on('error', (err) => {
+                console.error(err);
+                alert("エラーが発生しました。ページをリロードしてください。");
+            });
         }
 
         function connectToPeer() {
-            const remoteId = peerIdInput.value;
-            if (!remoteId) return;
-            if (remoteId === myId) {
-    　　　　    　alert("自分自身には接続できません。");
-        　　　　　setupStatusEl.innerText = "";
-        　　　　　return;
-    　　　　　}
-            setupStatusEl.innerText = "接続中...";
-            connectBtn.disabled = true;
+            const remoteId = getFullId();
+            if (remoteId.length !== 6) { alert("6桁入力してください"); return; }
+            if (remoteId === myId) { alert("自分には接続できません"); return; }
+
+            document.getElementById('setup-status').innerText = "接続中...";
             conn = peer.connect(remoteId);
             setupConnection(false);
         }
 
         function setupConnection(isHost) {
             conn.on('open', () => {
-                setupScreen.style.display = 'none';
-                gameScreen.style.display = 'flex';
+                document.getElementById('setup-screen').style.display = 'none';
+                document.getElementById('game-screen').style.display = 'block';
                 gameState.myColor = isHost ? BLACK : WHITE;
-                initBoard(); createBoardUI(); updateBoardUI();
-                startSessionTimer();
+                startGame();
             });
-            conn.on('data', handleDataReceive);
-            conn.on('close', () => endSession("相手が切断しました"));
-            conn.on('error', () => endSession("通信エラーが発生しました"));
+            conn.on('data', (data) => {
+                if (data.type === 'MOVE') {
+                    gameState.board = data.board;
+                    gameState.turn = data.nextTurn;
+                    renderBoard();
+                }
+            });
+            conn.on('close', () => alert("通信が切断されました"));
         }
 
-        // ページ読み込み完了時に実行
-        window.addEventListener('DOMContentLoaded', initPeer);
+        // --- 簡易ゲームロジック ---
+        function startGame() {
+            gameState.board = Array(8).fill().map(() => Array(8).fill(EMPTY));
+            gameState.board[3][3] = WHITE; gameState.board[3][4] = BLACK;
+            gameState.board[4][3] = BLACK; gameState.board[4][4] = WHITE;
+            createBoardUI();
+            renderBoard();
+        }
 
+        function createBoardUI() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.onclick = () => makeMove(r, c);
+                    boardEl.appendChild(cell);
+                }
+            }
+        }
+
+        function renderBoard() {
+            const cells = document.querySelectorAll('.cell');
+            gameState.board.flat().forEach((val, i) => {
+                cells[i].innerHTML = val === EMPTY ? '' : `<div class="stone ${val === BLACK ? 'black' : 'white'}"></div>`;
+            });
+            document.getElementById('game-status').innerText = 
+                gameState.turn === gameState.myColor ? "あなたの番です" : "相手の番です";
+        }
+
+        function makeMove(r, c) {
+            if (gameState.turn !== gameState.myColor || gameState.board[r][c] !== EMPTY) return;
+            // 本来はここでオセロのひっくり返しロジックを実行
+            gameState.board[r][c] = gameState.myColor;
+            gameState.turn = gameState.myColor === BLACK ? WHITE : BLACK;
+            conn.send({ type: 'MOVE', board: gameState.board, nextTurn: gameState.turn });
+            renderBoard();
+        }
+
+        window.addEventListener('DOMContentLoaded', initPeer);
     </script>
 </body>
 </html>
