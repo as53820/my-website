@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Othello v0.1.8</title>
+    <title>Othello</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
@@ -23,6 +23,7 @@
         .black { background: #111; }
         .white { background: #fff; transform: rotateY(180deg); }
         .hint { width: 30%; height: 30%; background: rgba(255,255,255,0.2); border-radius: 50%; }
+        .error-log { color: red; font-size: 0.8rem; margin-top: 10px; text-align: left; background: #fff1f1; padding: 5px; border-radius: 4px; display: none; }
     </style>
 </head>
 <body>
@@ -30,7 +31,7 @@
     <div id="setup-screen">
         <div style="font-size: 0.9rem; color: #666;">あなたの部屋ID</div>
         <div id="my-id-text" class="id-display">------</div>
-        <div class="otp-container">
+        <div class="otp-container" id="otp-parent">
             <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
             <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
             <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
@@ -40,6 +41,7 @@
         </div>
         <button id="join-btn" onclick="joinRoom()">対戦を開始する</button>
         <div id="status-msg" style="margin-top:15px; font-size:0.85rem; color:#666;"></div>
+        <div id="debug-log" class="error-log"></div>
     </div>
 
     <div id="game-screen">
@@ -51,11 +53,12 @@
     </div>
 
     <script>
-        // Firebase設定
+        // 設定値
         const firebaseConfig = {
             apiKey: "AIzaSyDIM-ycgMAJpIZXXC0UpeeG-PXPM0ds54w",
             authDomain: "osello-b18cb.firebaseapp.com",
-            databaseURL: "https://osello-b18cb-default-rtdb.firebaseio.com",
+            // databaseURLを明示的に指定
+            databaseURL: "https://osello-b18cb-default-rtdb.firebaseio.com", 
             projectId: "osello-b18cb",
             storageBucket: "osello-b18cb.firebasestorage.app",
             messagingSenderId: "521420510635",
@@ -69,8 +72,9 @@
         const inputs = document.querySelectorAll('.otp-input');
         const joinBtn = document.getElementById('join-btn');
         const statusMsg = document.getElementById('status-msg');
+        const debugLog = document.getElementById('debug-log');
 
-        // 自動フォーカス
+        // 入力制御
         inputs.forEach((input, i) => {
             input.oninput = () => { if(input.value && i<5) inputs[i+1].focus(); };
             input.onkeydown = (e) => { if(e.key==='Backspace' && !input.value && i>0) inputs[i-1].focus(); };
@@ -86,34 +90,34 @@
 
             joinBtn.disabled = true;
             joinBtn.innerText = "接続中...";
-            statusMsg.innerText = "Firebaseに接続しています...";
+            statusMsg.innerText = "Firebaseに接続して初期化中...";
 
             const ref = db.ref('rooms/' + roomId);
-            
-            // 接続エラー監視
-            const timeout = setTimeout(() => {
-                if (joinBtn.innerText === "接続中...") {
-                    statusMsg.innerText = "接続が遅いようです。ルール公開を確認してください。";
-                    statusMsg.style.color = "red";
-                }
-            }, 5000);
 
+            // 接続試行
             ref.on('value', (s) => {
-                clearTimeout(timeout);
                 const data = s.val();
                 if (!data && myColor === 1) {
                     const board = Array(64).fill(0);
                     board[27]=2; board[28]=1; board[35]=1; board[36]=2;
-                    ref.set({ board, turn: 1 });
+                    ref.set({ board, turn: 1 }).then(() => {
+                        console.log("Room Created");
+                    }).catch(e => showError(e));
                 } else if (data) {
                     document.getElementById('setup-screen').style.display = 'none';
                     document.getElementById('game-screen').style.display = 'block';
                     render(data.board, data.turn);
                 }
             }, (err) => {
-                statusMsg.innerText = "アクセス拒否: " + err.message;
-                statusMsg.style.color = "red";
+                showError(err);
             });
+        }
+
+        function showError(err) {
+            debugLog.style.display = "block";
+            debugLog.innerText = "エラー: " + err.message + "\nルール設定を確認してください。";
+            joinBtn.disabled = false;
+            joinBtn.innerText = "再試行";
         }
 
         function getFlips(board, idx, color) {
